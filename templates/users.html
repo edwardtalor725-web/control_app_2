@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Пользователи{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2>Управление пользователями</h2>
+    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
+        Добавить пользователя
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Имя пользователя</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Дата регистрации</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td>
+                            <span class="badge bg-{{ 'danger' if user.role == 'owner' else 'warning' if user.role == 'accountant' else 'info' }}">
+                                {{ user.role }}
+                            </span>
+                        </td>
+                        <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-warning" 
+                                    onclick="editUser({{ user.id }})">Изменить</button>
+                            {% if user.id != current_user.id %}
+                            <button class="btn btn-sm btn-outline-danger"
+                                    onclick="deleteUser({{ user.id }})">Удалить</button>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно добавления пользователя -->
+<div class="modal fade" id="addUserModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Новый пользователь</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{{ url_for('register') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label class="form-label">Имя пользователя*</label>
+                        <input type="text" name="username" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email*</label>
+                        <input type="email" name="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Пароль*</label>
+                        <input type="password" name="password" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Роль*</label>
+                        <select name="role" class="form-select" required>
+                            <option value="manager">Менеджер</option>
+                            <option value="accountant">Бухгалтер</option>
+                            <option value="owner">Владелец</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function editUser(userId) {
+    alert('Редактирование пользователя ID: ' + userId + '\n(В учебном примере реализуется отдельно)');
+}
+
+function deleteUser(userId) {
+    if (confirm('Вы уверены, что хотите удалить пользователя?')) {
+        alert('Удаление пользователя ID: ' + userId + '\n(В учебном примере реализуется отдельно)');
+    }
+}
+</script>
+{% endblock %}
