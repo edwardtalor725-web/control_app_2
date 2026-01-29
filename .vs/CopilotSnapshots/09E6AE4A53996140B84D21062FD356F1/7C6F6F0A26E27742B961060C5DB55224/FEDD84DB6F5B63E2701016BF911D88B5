@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Операции{% endblock %}
 
 {% block content %}
@@ -208,23 +208,18 @@
     function setType(type) {
         document.getElementById('operationType').value = type;
 
-        // Обновляем стили кнопок: вернуть всем outline, затем выставить выбранной
-        const incomeBtn = document.querySelector('[onclick="setType(\'income\')"]');
-        const expenseBtn = document.querySelector('[onclick="setType(\'expense\')"]');
+        // Обновляем стили кнопок
+        document.querySelectorAll('[onclick^="setType"]').forEach(btn => {
+            btn.classList.remove('btn-success', 'btn-danger');
+            btn.classList.add('btn-outline-success', 'btn-outline-danger');
+        });
 
-        if (incomeBtn && expenseBtn) {
-            incomeBtn.classList.remove('btn-success');
-            incomeBtn.classList.add('btn-outline-success');
-            expenseBtn.classList.remove('btn-danger');
-            expenseBtn.classList.add('btn-outline-danger');
-
-            if (type === 'income') {
-                incomeBtn.classList.remove('btn-outline-success');
-                incomeBtn.classList.add('btn-success');
-            } else {
-                expenseBtn.classList.remove('btn-outline-danger');
-                expenseBtn.classList.add('btn-danger');
-            }
+        if (type === 'income') {
+            document.querySelector('[onclick="setType(\'income\')"]').classList.remove('btn-outline-success');
+            document.querySelector('[onclick="setType(\'income\')"]').classList.add('btn-success');
+        } else {
+            document.querySelector('[onclick="setType(\'expense\')"]').classList.remove('btn-outline-danger');
+            document.querySelector('[onclick="setType(\'expense\')"]').classList.add('btn-danger');
         }
     }
 

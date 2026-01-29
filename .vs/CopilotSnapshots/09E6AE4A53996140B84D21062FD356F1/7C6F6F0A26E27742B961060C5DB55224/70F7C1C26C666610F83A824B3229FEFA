@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
@@ -186,8 +186,7 @@ def dashboard():
 @login_required
 def operations():
     if request.method == 'POST':
-        # Allow managers and above to add operations (previously required accountant)
-        if not check_permission('manager'):
+        if not check_permission('accountant'):
             flash('Недостаточно прав')
             return redirect(url_for('operations'))
         

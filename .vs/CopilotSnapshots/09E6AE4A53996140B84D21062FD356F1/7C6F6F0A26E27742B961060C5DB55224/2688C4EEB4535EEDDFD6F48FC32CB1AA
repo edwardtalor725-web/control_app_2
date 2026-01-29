@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Календарь платежей{% endblock %}
 
 {% block content %}
@@ -36,51 +36,46 @@
 </div>
 {% endblock %}
 
-{% block extra_css %}
+{% block scripts %}
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
-{% endblock %}
-
-{% block extra_js %}
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ru.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Используем события, переданные сервером
-    const eventsData = {{ events|safe }} || [];
-
     // Инициализация календаря
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'ru',
-        events: eventsData,
+        events: {{ events|safe }},
         eventColor: '#3788d8',
         eventTextColor: '#ffffff'
     });
     calendar.render();
-
-    // Отображаем в таблице предстоящие операции
-    const tbody = document.getElementById('plannedOperations');
-    eventsData.forEach(event => {
-        const row = document.createElement('tr');
-        const date = event.start ? new Date(event.start).toLocaleDateString('ru-RU') : '';
-        const type = (event.title || '').split(':')[0] || '';
-        const descPart = (event.title || '').split(':')[1] || '';
-        const category = descPart.split('-')[0] || '';
-        const amountMatch = (event.title || '').match(/\d+[.,]?\d*/g);
-        const amount = amountMatch ? amountMatch.pop() : '0';
-        // Bootstrap badge color mapping
-        const colorClass = (event.color === 'green') ? 'bg-success' : ((event.color === 'red') ? 'bg-danger' : 'bg-secondary');
-
-        row.innerHTML = `
-            <td>${date}</td>
-            <td><span class="badge ${colorClass}">${type}</span></td>
-            <td>${amount} руб.</td>
-            <td>${category}</td>
-            <td>${event.title || ''}</td>
-        `;
-        tbody.appendChild(row);
-    });
+    
+    // Загрузка запланированных операций
+    fetch('/calendar')
+        .then(response => response.text())
+        .then(html => {
+            // Парсим HTML для получения данных
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(html, 'text/html');
+            const events = JSON.parse(doc.querySelector('#eventsData')?.textContent || '[]');
+            
+            // Отображаем в таблице
+            const tbody = document.getElementById('plannedOperations');
+            events.forEach(event => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${new Date(event.start).toLocaleDateString('ru-RU')}</td>
+                    <td><span class="badge bg-${event.color}">${event.title.split(':')[0]}</span></td>
+                    <td>${event.title.match(/\d+/g)?.pop() || 0} руб.</td>
+                    <td>${event.title.split(':')[1]?.split('-')[0] || ''}</td>
+                    <td>${event.title}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        });
 });
 </script>
 {% endblock %}
