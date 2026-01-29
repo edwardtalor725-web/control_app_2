@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
@@ -183,16 +183,16 @@ def operations():
             return redirect(url_for('operations'))
 
         operation = Operation(
-            type=request.form.get('type', 'expense'),
-            amount=float(request.form.get('amount', 0)),
-            category=request.form.get('category', 'Прочее'),
+            type=request.form['type'],
+            amount=float(request.form['amount']),
+            category=request.form['category'],
             description=request.form.get('description'),
-            date=datetime.strptime(request.form.get('date'), '%Y-%m-%d').date() if request.form.get('date') else date.today(),
-            is_planned=('is_planned' in request.form),
-            planned_date=(datetime.strptime(request.form.get('planned_date'), '%Y-%m-%d').date() if request.form.get('planned_date') else None),
-            status=('planned' if 'is_planned' in request.form else 'completed'),
+            date=datetime.strptime(request.form['date'], '%Y-%m-%d').date(),
+            is_planned='is_planned' in request.form,
+            planned_date=datetime.strptime(request.form['planned_date'], '%Y-%m-%d').date() if request.form.get('planned_date') else None,
+            status='planned' if 'is_planned' in request.form else 'completed',
             user_id=current_user.id,
-            counterparty_id=(request.form.get('counterparty_id') if request.form.get('counterparty_id') else None)
+            counterparty_id=request.form['counterparty_id'] if request.form.get('counterparty_id') else None
         )
 
         db.session.add(operation)
@@ -204,22 +204,22 @@ def operations():
     operations_query = Operation.query
 
     if request.args.get('type'):
-        operations_query = operations_query.filter_by(type=request.args.get('type'))
+        operations_query = operations_query.filter_by(type=request.args['type'])
     if request.args.get('start_date'):
-        start_date = datetime.strptime(request.args.get('start_date'), '%Y-%m-%d').date()
+        start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d').date()
         operations_query = operations_query.filter(Operation.date >= start_date)
     if request.args.get('end_date'):
-        end_date = datetime.strptime(request.args.get('end_date'), '%Y-%m-%d').date()
+        end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d').date()
         operations_query = operations_query.filter(Operation.date <= end_date)
 
     operations = operations_query.order_by(Operation.date.desc()).all()
     counterparties = Counterparty.query.all()
 
     return render_template('operations.html',
-                           operations=operations,
-                           counterparties=counterparties,
-                           categories=CATEGORIES,
-                           today=date.today())  # Добавил today
+                         operations=operations,
+                         counterparties=counterparties,
+                         categories=CATEGORIES,
+                         today=date.today())  # Добавил today
 
 
 @app.route('/operations/edit/<int:op_id>', methods=['GET', 'POST'])

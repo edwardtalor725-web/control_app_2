@@ -1,0 +1,258 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\app.py||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:app.py||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\report_export.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\report_export.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\static\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:static\\css\\app.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\operations.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\operations.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\base.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\base.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\reports.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\reports.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\login.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\login.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\render.yaml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:render.yaml||{06C066C6-04A2-4E5D-8202-439FD4234EF1}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\requirements.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:requirements.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\Procfile||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Procfile||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\runtime.txt||{8B382828-6202-11D1-8870-0000F87579D2}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:runtime.txt||{8B382828-6202-11D1-8870-0000F87579D2}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\dashboard.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\dashboard.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\calendar.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\calendar.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\edit_operation.html||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:templates\\edit_operation.html||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 4,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "edit_operation.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\edit_operation.html",
+              "RelativeDocumentMoniker": "templates\\edit_operation.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\edit_operation.html",
+              "RelativeToolTip": "templates\\edit_operation.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T11:57:25.729Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "report_export.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\report_export.html",
+              "RelativeDocumentMoniker": "templates\\report_export.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\report_export.html",
+              "RelativeToolTip": "templates\\report_export.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABgAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T11:28:54.092Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "app.css",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\static\\css\\app.css",
+              "RelativeDocumentMoniker": "static\\css\\app.css",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\static\\css\\app.css",
+              "RelativeToolTip": "static\\css\\app.css",
+              "ViewState": "AgIAACQAAAAAAAAAAAAAADUAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2026-01-29T10:49:36.456Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "operations.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\operations.html",
+              "RelativeDocumentMoniker": "templates\\operations.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\operations.html",
+              "RelativeToolTip": "templates\\operations.html",
+              "ViewState": "AgIAAEQAAAAAAAAAAAApwAUBAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T10:22:22.351Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "app.py",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\app.py",
+              "RelativeDocumentMoniker": "app.py",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\app.py",
+              "RelativeToolTip": "app.py",
+              "ViewState": "AgIAALgAAAAAAAAAAAAuwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.002457|",
+              "WhenOpened": "2026-01-29T10:42:34.964Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "reports.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\reports.html",
+              "RelativeDocumentMoniker": "templates\\reports.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\reports.html",
+              "RelativeToolTip": "templates\\reports.html",
+              "ViewState": "AgIAAMUAAAAAAAAAAAAAANwAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T10:22:30.533Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "base.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\base.html",
+              "RelativeDocumentMoniker": "templates\\base.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\base.html",
+              "RelativeToolTip": "templates\\base.html",
+              "ViewState": "AgIAABcCAAAAAAAAAAAQwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T10:21:49.614Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "login.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\login.html",
+              "RelativeDocumentMoniker": "templates\\login.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\login.html",
+              "RelativeToolTip": "templates\\login.html",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAHwAAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T10:22:17.503Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "render.yaml",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\render.yaml",
+              "RelativeDocumentMoniker": "render.yaml",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\render.yaml",
+              "RelativeToolTip": "render.yaml",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003775|",
+              "WhenOpened": "2026-01-29T10:44:06.223Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "calendar.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\calendar.html",
+              "RelativeDocumentMoniker": "templates\\calendar.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\calendar.html",
+              "RelativeToolTip": "templates\\calendar.html",
+              "ViewState": "AgIAAE4AAAAAAAAAACBjwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T11:15:33.107Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "requirements.txt",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\requirements.txt",
+              "RelativeDocumentMoniker": "requirements.txt",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\requirements.txt",
+              "RelativeToolTip": "requirements.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-01-29T10:43:47.95Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "Procfile",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\Procfile",
+              "RelativeDocumentMoniker": "Procfile",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\Procfile",
+              "RelativeToolTip": "Procfile",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
+              "WhenOpened": "2026-01-29T10:45:58.544Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "runtime.txt",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\runtime.txt",
+              "RelativeDocumentMoniker": "runtime.txt",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\runtime.txt",
+              "RelativeToolTip": "runtime.txt",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003109|",
+              "WhenOpened": "2026-01-29T10:46:02.006Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "dashboard.html",
+              "DocumentMoniker": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\dashboard.html",
+              "RelativeDocumentMoniker": "templates\\dashboard.html",
+              "ToolTip": "C:\\Users\\\u0418\u0432\u0430\u043D\\Documents\\GitHub\\control_app\\templates\\dashboard.html",
+              "RelativeToolTip": "templates\\dashboard.html",
+              "ViewState": "AgIAAHsAAAAAAAAAAAAvwBUBAAAOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001512|",
+              "WhenOpened": "2026-01-29T10:22:07.994Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
