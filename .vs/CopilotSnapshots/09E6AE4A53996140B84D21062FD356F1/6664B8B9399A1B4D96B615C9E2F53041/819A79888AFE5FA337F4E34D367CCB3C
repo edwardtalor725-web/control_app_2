@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
@@ -181,28 +181,6 @@ def operations():
         if not check_permission('manager'):
             flash('Недостаточно прав')
             return redirect(url_for('operations'))
-
-
-@app.route('/operations/edit/<int:op_id>', methods=['GET', 'POST'])
-@login_required
-def edit_operation(op_id):
-    op = Operation.query.get_or_404(op_id)
-
-    if request.method == 'POST':
-        if not check_permission('accountant'):
-            flash('Недостаточно прав')
-            return redirect(url_for('operations'))
-
-        op.type = request.form['type']
-        op.amount = float(request.form['amount'])
-        op.category = request.form['category']
-        op.description = request.form.get('description')
-        op.date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-        db.session.commit()
-        flash('Операция обновлена')
-        return redirect(url_for('operations'))
-
-    return render_template('edit_operation.html', operation=op, categories=CATEGORIES)
         
         operation = Operation(
             type=request.form['type'],

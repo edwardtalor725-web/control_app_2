@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -373,23 +373,15 @@
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Floating global hamburger (visible on all pages except auth) -->
-    {% if request.path != '/login' and request.path != '/register' %}
-    <button id="globalHamburger" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="position:fixed;right:18px;top:18px;z-index:2000;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.12);">
-        <i class="fas fa-bars"></i>
-    </button>
-    {% endif %}
     <!-- Мобильный хедер -->
     <div class="mobile-header d-md-none">
         <div class="d-flex justify-content-between align-items-center">
-            <div class="d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-light me-2" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <h1 class="mb-0">💰 Финансовый контроль</h1>
-            </div>
+            <h1>💰 Финансовый контроль</h1>
             <div class="d-flex align-items-center">
                 {% if session.username %}
+                <button class="btn btn-sm btn-outline-light me-2" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
+                    <i class="fas fa-bars"></i>
+                </button>
                 <div class="d-flex flex-column text-end me-2" style="font-size:0.85rem;">
                     <strong style="line-height:1;">{{ session.username }}</strong>
                     <small style="opacity:0.9;">{{ session.role }}</small>
@@ -432,10 +424,6 @@
     <!-- Десктопная навигация (скрыта на мобильных) -->
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-none d-md-flex">
         <div class="container">
-            <!-- Desktop hamburger to open the same offcanvas menu -->
-            <button class="btn btn-outline-light me-2 d-none d-md-inline-block" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
-                <i class="fas fa-bars"></i>
-            </button>
             <a class="navbar-brand" href="/">💰 Финансовый контроль</a>
             {% if session.username %}
             <div class="collapse navbar-collapse">

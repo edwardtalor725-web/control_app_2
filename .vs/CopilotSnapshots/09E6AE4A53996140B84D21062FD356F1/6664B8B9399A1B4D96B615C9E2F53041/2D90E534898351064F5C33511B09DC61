@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
@@ -49,6 +49,12 @@ class Operation(db.Model):
     user_id = db.Column(db.Integer, nullable=False)
     counterparty_id = db.Column(db.Integer)
 
+class Account(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    balance = db.Column(db.Float, default=0.0)
+    min_balance = db.Column(db.Float, default=0.0)
+    currency = db.Column(db.String(3), default='RUB')
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -159,6 +165,8 @@ def dashboard():
         Operation.status == 'completed'
     ).order_by(Operation.date.desc()).limit(10).all()
     
+    # Счета
+    accounts = Account.query.all()
     
     # Уведомления
     notifications = Notification.query.filter_by(
@@ -170,6 +178,7 @@ def dashboard():
                          expense=monthly_expense,
                          profit=profit,
                          operations=recent_operations,
+                         accounts=accounts,
                          notifications=notifications,
                          today=date.today())  # Добавил today
 
@@ -181,28 +190,6 @@ def operations():
         if not check_permission('manager'):
             flash('Недостаточно прав')
             return redirect(url_for('operations'))
-
-
-@app.route('/operations/edit/<int:op_id>', methods=['GET', 'POST'])
-@login_required
-def edit_operation(op_id):
-    op = Operation.query.get_or_404(op_id)
-
-    if request.method == 'POST':
-        if not check_permission('accountant'):
-            flash('Недостаточно прав')
-            return redirect(url_for('operations'))
-
-        op.type = request.form['type']
-        op.amount = float(request.form['amount'])
-        op.category = request.form['category']
-        op.description = request.form.get('description')
-        op.date = datetime.strptime(request.form['date'], '%Y-%m-%d').date()
-        db.session.commit()
-        flash('Операция обновлена')
-        return redirect(url_for('operations'))
-
-    return render_template('edit_operation.html', operation=op, categories=CATEGORIES)
         
         operation = Operation(
             type=request.form['type'],
@@ -505,6 +492,14 @@ def init_database():
                 role='manager'
             )
             db.session.add(manager)
+            
+            # Создаем тестовые счета
+            accounts = [
+                Account(name='Основной счет', balance=100000, min_balance=50000),
+                Account(name='Резервный счет', balance=50000, min_balance=10000)
+            ]
+            for acc in accounts:
+                db.session.add(acc)
             
             # Создаем тестовых контрагентов
             counterparties = [

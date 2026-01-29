@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Редактировать операцию{% endblock %}
+
+{% block content %}
+<div class="mobile-container" style="max-width: 720px; margin: 0 auto;">
+    <div class="mobile-card">
+        <h5 class="mobile-h4 mb-3">Редактировать операцию</h5>
+        <form method="post">
+            <div class="row g-2">
+                <div class="col-6">
+                    <label class="form-label">Тип</label>
+                    <select name="type" class="mobile-input">
+                        <option value="income" {% if operation.type == 'income' %}selected{% endif %}>Доход</option>
+                        <option value="expense" {% if operation.type == 'expense' %}selected{% endif %}>Расход</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <label class="form-label">Сумма</label>
+                    <input type="number" name="amount" class="mobile-input" value="{{ operation.amount }}" step="0.01" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Категория</label>
+                    <select name="category" class="mobile-input">
+                        {% for type, cats in categories.items() %}
+                        <optgroup label="{{ type }}">
+                            {% for c in cats %}
+                            <option value="{{ c }}" {% if operation.category == c %}selected{% endif %}>{{ c }}</option>
+                            {% endfor %}
+                        </optgroup>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Дата</label>
+                    <input type="date" name="date" class="mobile-input" value="{{ operation.date }}" required>
+                </div>
+                <div class="col-12">
+                    <label class="form-label">Описание</label>
+                    <textarea name="description" class="mobile-input" rows="3">{{ operation.description }}</textarea>
+                </div>
+            </div>
+            <div class="mt-3 text-end">
+                <a href="/operations" class="btn btn-secondary me-2">Отмена</a>
+                <button type="submit" class="btn btn-primary">Сохранить</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

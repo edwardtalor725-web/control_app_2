@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Дашборд{% endblock %}
 
 {% block content %}
@@ -124,34 +124,30 @@
         {% endif %}
     </div>
 
-    <!-- Быстрые действия панель -->
+    <!-- Счета -->
     <div class="mobile-card">
-        <h5 class="mobile-h4 mb-3">Быстрые действия</h5>
-        <div class="row g-2">
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #e3f2fd; color: #1976d2;"
-                        onclick="location.href='/operations?type=income'">
-                    <i class="fas fa-plus-circle me-2"></i>Доход
-                </button>
+        <h5 class="mobile-h4 mb-3">Счета</h5>
+        <div class="row">
+            {% for acc in accounts %}
+            <div class="col-6 mb-3">
+                <div class="p-3 border rounded" style="background: #f8f9fa;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div style="font-size: 0.9rem; color: #666;">{{ acc.name }}</div>
+                            <div class="mobile-h3">{{ "%.0f"|format(acc.balance) }} ₽</div>
+                        </div>
+                        <span class="badge {{ 'bg-success' if acc.balance >= acc.min_balance else 'bg-warning' }}">
+                            {{ 'OK' if acc.balance >= acc.min_balance else 'Low' }}
+                        </span>
+                    </div>
+                    {% if acc.min_balance and acc.min_balance > 0 %}
+                    <div class="mt-2" style="font-size: 0.8rem; color: #999;">
+                        <i class="fas fa-exclamation-circle me-1"></i>Мин: {{ "%.0f"|format(acc.min_balance) }} ₽
+                    </div>
+                    {% endif %}
+                </div>
             </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #ffebee; color: #d32f2f;"
-                        onclick="location.href='/operations?type=expense'">
-                    <i class="fas fa-minus-circle me-2"></i>Расход
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #f3e5f5; color: #7b1fa2;"
-                        onclick="location.href='/reports'">
-                    <i class="fas fa-file-invoice me-2"></i>Отчет
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #e8f5e8; color: #388e3c;"
-                        onclick="location.href='/calendar'">
-                    <i class="fas fa-calendar-alt me-2"></i>Календарь
-                </button>
-            </div>
+            {% endfor %}
         </div>
     </div>
 

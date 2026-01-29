@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Операции{% endblock %}
 
 {% block content %}
@@ -75,8 +75,7 @@
                                 {{ op.description[:15] }}{% if op.description|length > 15 %}...{% endif %}
                             </div>
                             {% endif %}
-                            <div class="mt-2 d-flex gap-2 justify-content-end">
-                                <a href="/operations/edit/{{ op.id }}" class="btn btn-sm btn-outline-primary">Изменить</a>
+                            <div class="mt-2">
                                 <form method="post" action="/operations/delete/{{ op.id }}" onsubmit="return confirm('Удалить операцию?');" style="display:inline;">
                                     <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
                                 </form>
