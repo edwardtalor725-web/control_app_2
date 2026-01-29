@@ -2,152 +2,200 @@
 {% block title %}Операции{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Учет операций</h2>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOperationModal">
-        Добавить операцию
-    </button>
-</div>
+<div class="mobile-container">
+    <!-- Быстрое добавление -->
+    <div class="mobile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mobile-h4 mb-0">Операции</h5>
+            <div class="dropdown">
+                <button class="btn btn-sm btn-outline-primary" type="button"
+                        data-bs-toggle="modal" data-bs-target="#addModal">
+                    <i class="fas fa-plus me-1"></i>Добавить
+                </button>
+            </div>
+        </div>
 
-<!-- Фильтры -->
-<div class="card mb-4">
-    <div class="card-body">
-        <form method="get" class="row g-3">
-            <div class="col-md-3">
-                <label class="form-label">Тип операции</label>
-                <select name="type" class="form-select">
-                    <option value="">Все</option>
-                    <option value="income" {% if request.args.get('type') == 'income' %}selected{% endif %}>Доходы</option>
-                    <option value="expense" {% if request.args.get('type') == 'expense' %}selected{% endif %}>Расходы</option>
-                </select>
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">С даты</label>
-                <input type="date" name="start_date" class="form-control" 
-                       value="{{ request.args.get('start_date', '') }}">
-            </div>
-            <div class="col-md-3">
-                <label class="form-label">По дату</label>
-                <input type="date" name="end_date" class="form-control"
-                       value="{{ request.args.get('end_date', '') }}">
-            </div>
-            <div class="col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-outline-primary w-100">Применить</button>
-            </div>
-        </form>
+        <!-- Быстрые фильтры -->
+        <div class="mobile-filter">
+            <form method="get" class="row g-2">
+                <div class="col-6">
+                    <select name="type" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">Все типы</option>
+                        <option value="income" {% if request.args.get('type')= ='income' %}selected{% endif %}>Доходы</option>
+                        <option value="expense" {% if request.args.get('type')= ='expense' %}selected{% endif %}>Расходы</option>
+                    </select>
+                </div>
+                <div class="col-6">
+                    <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
+                        <option value="">Все категории</option>
+                        {% for cat_list in categories.values() %}
+                        {% for cat in cat_list %}
+                        <option value="{{ cat }}" {% if request.args.get('category')= =cat %}selected{% endif %}>{{ cat }}</option>
+                        {% endfor %}
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
     </div>
-</div>
 
-<!-- Таблица операций -->
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
+    <!-- Список операций -->
+    <div class="mobile-card">
+        <div class="table-responsive-mobile">
+            <table class="mobile-table">
                 <thead>
                     <tr>
                         <th>Дата</th>
                         <th>Тип</th>
-                        <th>Категория</th>
                         <th>Сумма</th>
-                        <th>Описание</th>
-                        <th>Статус</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for op in operations %}
-                    <tr>
-                        <td>{{ op.date.strftime('%d.%m.%Y') }}</td>
+                    <tr onclick="showOperationDetails({{ op.id }})" style="cursor: pointer;">
                         <td>
-                            <span class="badge bg-{{ 'success' if op.type == 'income' else 'danger' }}">
-                                {{ 'Доход' if op.type == 'income' else 'Расход' }}
+                            <div style="font-size: 0.9rem;">
+                                {{ op.op_date if op.op_date else op.date }}
+                            </div>
+                            <div style="font-size: 0.8rem; color: #666;">
+                                {{ op.category[:10] }}{% if op.category|length > 10 %}...{% endif %}
+                            </div>
+                        </td>
+                        <td>
+                            <span class="status-badge {{ 'status-income' if op.type == 'income' else 'status-expense' }}">
+                                <i class="fas {{ 'fa-arrow-up' if op.type == 'income' else 'fa-arrow-down' }}"></i>
                             </span>
                         </td>
-                        <td>{{ op.category }}</td>
-                        <td>{{ "%.2f"|format(op.amount) }} руб.</td>
-                        <td>{{ op.description }}</td>
-                        <td>
-                            <span class="badge bg-{{ 'success' if op.status == 'completed' else 'warning' }}">
-                                {{ 'Выполнена' if op.status == 'completed' else 'Запланирована' }}
-                            </span>
+                        <td class="text-end">
+                            <div style="font-weight: 600; {{ 'color: #28a745;' if op.type == 'income' else 'color: #dc3545;' }}">
+                                {{ "%.0f"|format(op.amount) }} ₽
+                            </div>
+                            {% if op.description %}
+                            <div style="font-size: 0.8rem; color: #666; margin-top: 2px;">
+                                {{ op.description[:15] }}{% if op.description|length > 15 %}...{% endif %}
+                            </div>
+                            {% endif %}
                         </td>
                     </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
+
+        {% if operations|length == 0 %}
+        <div class="text-center py-5">
+            <div class="action-icon" style="width: 60px; height: 60px; margin: 0 auto 20px; background: #e9ecef;">
+                <i class="fas fa-receipt fa-2x text-muted"></i>
+            </div>
+            <h6 class="mobile-h4 mb-2">Нет операций</h6>
+            <p class="text-muted mb-4">Добавьте первую операцию</p>
+            <button class="mobile-btn mobile-btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">
+                <i class="fas fa-plus me-2"></i>Добавить операцию
+            </button>
+        </div>
+        {% endif %}
     </div>
+
+    <!-- Статистика -->
+    {% if operations|length > 0 %}
+    <div class="mobile-card">
+        <h6 class="mobile-h4 mb-3">Статистика</h6>
+        <div class="row text-center">
+            <div class="col-4">
+                <div class="p-2">
+                    <div style="font-size: 1.2rem; font-weight: 600; color: #28a745;">
+                        {{ "%.0f"|format(operations|selectattr('type', 'equalto', 'income')|map(attribute='amount')|sum) }} ₽
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">Доходы</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="p-2">
+                    <div style="font-size: 1.2rem; font-weight: 600; color: #dc3545;">
+                        {{ "%.0f"|format(operations|selectattr('type', 'equalto', 'expense')|map(attribute='amount')|sum) }} ₽
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">Расходы</div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="p-2">
+                    <div style="font-size: 1.2rem; font-weight: 600; color: #17a2b8;">
+                        {{ "%.0f"|format((operations|selectattr('type', 'equalto', 'income')|map(attribute='amount')|sum) - (operations|selectattr('type', 'equalto', 'expense')|map(attribute='amount')|sum)) }} ₽
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">Прибыль</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
 </div>
 
 <!-- Модальное окно добавления операции -->
-<div class="modal fade" id="addOperationModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Новая операция</h5>
+                <h5 class="modal-title mobile-h4">
+                    <i class="fas fa-plus-circle me-2"></i>Новая операция
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <form method="post" action="{{ url_for('operations') }}">
+            <form method="post" action="/operations">
                 <div class="modal-body">
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">Тип операции*</label>
-                            <select name="type" class="form-select" required>
-                                <option value="income">Доход</option>
-                                <option value="expense">Расход</option>
-                            </select>
+                    <!-- Быстрый выбор типа -->
+                    <div class="row g-2 mb-3">
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-success w-100"
+                                    onclick="setType('income')">
+                                <i class="fas fa-arrow-up me-1"></i>Доход
+                            </button>
                         </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Категория*</label>
-                            <select name="category" class="form-select" required>
-                                {% for type, cats in categories.items() %}
-                                    <optgroup label="{{ 'Доходы' if type == 'income' else 'Расходы' }}">
-                                        {% for cat in cats %}
-                                            <option value="{{ cat }}">{{ cat }}</option>
-                                        {% endfor %}
-                                    </optgroup>
+                        <div class="col-6">
+                            <button type="button" class="btn btn-outline-danger w-100"
+                                    onclick="setType('expense')">
+                                <i class="fas fa-arrow-down me-1"></i>Расход
+                            </button>
+                        </div>
+                    </div>
+
+                    <input type="hidden" name="type" id="operationType" value="income" required>
+
+                    <div class="mb-3">
+                        <label class="form-label">Сумма (₽)</label>
+                        <input type="number" name="amount" class="mobile-input"
+                               placeholder="0" step="0.01" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Категория</label>
+                        <select name="category" class="mobile-input" required>
+                            {% for type, cat_list in categories.items() %}
+                            <optgroup label="{{ 'Доходы' if type == 'income' else 'Расходы' }}">
+                                {% for cat in cat_list %}
+                                <option value="{{ cat }}">{{ cat }}</option>
                                 {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Сумма*</label>
-                            <input type="number" step="0.01" name="amount" class="form-control" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Дата*</label>
-                            <input type="date" name="date" class="form-control" 
-                                   value="{{ today.strftime('%Y-%m-%d') }}" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">Контрагент</label>
-                            <select name="counterparty_id" class="form-select">
-                                <option value="">Не выбран</option>
-                                {% for cp in counterparties %}
-                                    <option value="{{ cp.id }}">{{ cp.name }} ({{ cp.type }})</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="col-md-12">
-                            <label class="form-label">Описание</label>
-                            <textarea name="description" class="form-control" rows="2"></textarea>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-check">
-                                <input type="checkbox" name="is_planned" class="form-check-input" 
-                                       id="isPlanned">
-                                <label class="form-check-label" for="isPlanned">
-                                    Запланированная операция
-                                </label>
-                            </div>
-                        </div>
-                        <div class="col-md-6" id="plannedDateField" style="display: none;">
-                            <label class="form-label">Планируемая дата</label>
-                            <input type="date" name="planned_date" class="form-control">
-                        </div>
+                            </optgroup>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Дата</label>
+                        <input type="date" name="date" class="mobile-input"
+                               value="{{ today.strftime('%Y-%m-%d') }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Описание (необязательно)</label>
+                        <textarea name="description" class="mobile-input"
+                                  rows="2" placeholder="Краткое описание операции"></textarea>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Сохранить</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save me-1"></i>Сохранить
+                    </button>
                 </div>
             </form>
         </div>
@@ -155,18 +203,49 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script>
-// Показ/скрытие поля планируемой даты
-document.addEventListener('DOMContentLoaded', function() {
-    const isPlannedCheckbox = document.getElementById('isPlanned');
-    const plannedDateField = document.getElementById('plannedDateField');
-    
-    if (isPlannedCheckbox) {
-        isPlannedCheckbox.addEventListener('change', function() {
-            plannedDateField.style.display = this.checked ? 'block' : 'none';
+    function setType(type) {
+        document.getElementById('operationType').value = type;
+
+        // Обновляем стили кнопок
+        document.querySelectorAll('[onclick^="setType"]').forEach(btn => {
+            btn.classList.remove('btn-success', 'btn-danger');
+            btn.classList.add('btn-outline-success', 'btn-outline-danger');
         });
+
+        if (type === 'income') {
+            document.querySelector('[onclick="setType(\'income\')"]').classList.remove('btn-outline-success');
+            document.querySelector('[onclick="setType(\'income\')"]').classList.add('btn-success');
+        } else {
+            document.querySelector('[onclick="setType(\'expense\')"]').classList.remove('btn-outline-danger');
+            document.querySelector('[onclick="setType(\'expense\')"]').classList.add('btn-danger');
+        }
     }
-});
+
+    function showOperationDetails(id) {
+        // В реальном приложении здесь будет переход к деталям
+        alert('Детали операции ID: ' + id + '\nВ демо-версии не реализовано');
+    }
+
+    // Инициализация
+    document.addEventListener('DOMContentLoaded', function () {
+        // Настройка даты по умолчанию
+        const dateInput = document.querySelector('input[name="date"]');
+        if (dateInput && !dateInput.value) {
+            const today = new Date();
+            dateInput.value = today.toISOString().split('T')[0];
+        }
+
+        // Показ/скрытие дополнительных полей
+        const categorySelect = document.querySelector('select[name="category"]');
+        if (categorySelect) {
+            categorySelect.addEventListener('change', function () {
+                if (this.value === 'Другое') {
+                    // Можно показать поле для ввода своей категории
+                }
+            });
+        }
+    });
 </script>
 {% endblock %}

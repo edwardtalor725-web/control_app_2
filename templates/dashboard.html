@@ -2,191 +2,250 @@
 {% block title %}Дашборд{% endblock %}
 
 {% block content %}
-<div class="row">
-    <!-- Ключевые метрики -->
-    <div class="col-md-3 mb-4">
-        <div class="card text-white bg-success">
-            <div class="card-body">
-                <h5 class="card-title">Доходы</h5>
-                <h2>{{ "%.2f"|format(income) }} руб.</h2>
-                <p class="card-text">За текущий месяц</p>
-            </div>
-        </div>
+<div class="mobile-container">
+    <!-- Быстрые действия -->
+    <div class="d-flex justify-content-between mb-4">
+        <button class="mobile-btn mobile-btn-primary me-2" onclick="location.href='/operations'">
+            <i class="fas fa-plus me-2"></i>Добавить операцию
+        </button>
+        <button class="mobile-btn" style="background: #e9ecef; color: #333;" onclick="location.href='/reports'">
+            <i class="fas fa-chart-bar me-2"></i>Отчеты
+        </button>
     </div>
-    
-    <div class="col-md-3 mb-4">
-        <div class="card text-white bg-danger">
-            <div class="card-body">
-                <h5 class="card-title">Расходы</h5>
-                <h2>{{ "%.2f"|format(expense) }} руб.</h2>
-                <p class="card-text">За текущий месяц</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3 mb-4">
-        <div class="card text-white bg-info">
-            <div class="card-body">
-                <h5 class="card-title">Прибыль</h5>
-                <h2>{{ "%.2f"|format(profit) }} руб.</h2>
-                <p class="card-text">За текущий месяц</p>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-3 mb-4">
-        <div class="card text-white bg-warning">
-            <div class="card-body">
-                <h5 class="card-title">Счета</h5>
-                <h2>{{ "%.2f"|format(accounts|sum(attribute='balance')) }} руб.</h2>
-                <p class="card-text">Общий остаток</p>
-            </div>
-        </div>
-    </div>
-</div>
 
-<div class="row">
-    <!-- Графики -->
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Расходы по категориям</h5>
-            </div>
-            <div class="card-body">
-                <canvas id="expenseChart"></canvas>
-            </div>
-        </div>
-    </div>
-    
-    <div class="col-md-6">
-        <div class="card">
-            <div class="card-header">
-                <h5>Cash Flow (30 дней)</h5>
-            </div>
-            <div class="card-body">
-                <canvas id="cashFlowChart"></canvas>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row mt-4">
-    <!-- Последние операции -->
-    <div class="col-md-8">
-        <div class="card">
-            <div class="card-header">
-                <h5>Последние операции</h5>
-            </div>
-            <div class="card-body">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Дата</th>
-                            <th>Тип</th>
-                            <th>Категория</th>
-                            <th>Сумма</th>
-                            <th>Описание</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for op in operations %}
-                        <tr>
-                            <td>{{ op.date.strftime('%d.%m.%Y') }}</td>
-                            <td>
-                                <span class="badge bg-{{ 'success' if op.type == 'income' else 'danger' }}">
-                                    {{ 'Доход' if op.type == 'income' else 'Расход' }}
-                                </span>
-                            </td>
-                            <td>{{ op.category }}</td>
-                            <td>{{ "%.2f"|format(op.amount) }} руб.</td>
-                            <td>{{ op.description }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Уведомления -->
-    <div class="col-md-4">
-        <div class="card">
-            <div class="card-header">
-                <h5>Уведомления</h5>
-            </div>
-            <div class="card-body">
-                {% if notifications %}
-                    <div class="list-group">
-                        {% for note in notifications %}
-                        <div class="list-group-item list-group-item-action">
-                            <small>{{ note.created_at.strftime('%H:%M %d.%m') }}</small>
-                            <p class="mb-1">{{ note.message }}</p>
-                        </div>
-                        {% endfor %}
+    <!-- Метрики в сетке -->
+    <div class="metrics-grid">
+        <div class="metric-card income">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
+                        <i class="fas fa-arrow-up me-1"></i>Доходы
                     </div>
-                {% else %}
-                    <p class="text-muted">Нет новых уведомлений</p>
-                {% endif %}
+                    <div class="mobile-h2" style="color: #28a745;">{{ "%.0f"|format(income) }} ₽</div>
+                </div>
+                <div class="action-icon" style="background: #28a745;">
+                    <i class="fas fa-money-bill-wave"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card expense">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
+                        <i class="fas fa-arrow-down me-1"></i>Расходы
+                    </div>
+                    <div class="mobile-h2" style="color: #dc3545;">{{ "%.0f"|format(expense) }} ₽</div>
+                </div>
+                <div class="action-icon" style="background: #dc3545;">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="metric-card profit">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
+                        <i class="fas fa-chart-line me-1"></i>Прибыль
+                    </div>
+                    <div class="mobile-h2" style="color: #17a2b8;">{{ "%.0f"|format(profit) }} ₽</div>
+                </div>
+                <div class="action-icon" style="background: #17a2b8;">
+                    <i class="fas fa-coins"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- График расходов (мобильная версия) -->
+    <div class="mobile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mobile-h4 mb-0">Расходы по категориям</h5>
+            <span class="badge bg-light text-dark">
+                <i class="fas fa-filter me-1"></i>Месяц
+            </span>
+        </div>
+
+        <!-- Простая круговая диаграмма -->
+        <div class="text-center">
+            <canvas id="expenseChart" height="250"></canvas>
+        </div>
+
+        <div class="swipe-indicator">
+            <i class="fas fa-arrows-left-right me-1"></i>Свайпайте для деталей
+        </div>
+    </div>
+
+    <!-- Последние операции -->
+    <div class="mobile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mobile-h4 mb-0">Последние операции</h5>
+            <a href="/operations" class="btn btn-sm btn-outline-primary">
+                Все <i class="fas fa-arrow-right ms-1"></i>
+            </a>
+        </div>
+
+        <div class="table-responsive-mobile">
+            <table class="mobile-table">
+                <thead>
+                    <tr>
+                        <th style="width: 30%;">Дата</th>
+                        <th style="width: 20%;">Тип</th>
+                        <th style="width: 30%;">Категория</th>
+                        <th style="width: 20%;" class="text-end">Сумма</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for op in operations[:5] %}
+                    <tr onclick="location.href='/operations'" style="cursor: pointer;">
+                        <td>{{ op.op_date if op.op_date else op.date }}</td>
+                        <td>
+                            <span class="status-badge {{ 'status-income' if op.type == 'income' else 'status-expense' }}">
+                                <i class="fas {{ 'fa-arrow-up me-1' if op.type == 'income' else 'fa-arrow-down me-1' }}"></i>
+                                {{ 'Доход' if op.type == 'income' else 'Расход' }}
+                            </span>
+                        </td>
+                        <td>{{ op.category[:15] }}{% if op.category|length > 15 %}...{% endif %}</td>
+                        <td class="text-end {{ 'text-success' if op.type == 'income' else 'text-danger' }}">
+                            <strong>{{ "%.0f"|format(op.amount) }} ₽</strong>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if operations|length == 0 %}
+        <div class="text-center py-4">
+            <i class="fas fa-receipt fa-2x text-muted mb-3"></i>
+            <p class="text-muted">Нет операций</p>
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Счета -->
+    <div class="mobile-card">
+        <h5 class="mobile-h4 mb-3">Счета</h5>
+        <div class="row">
+            {% for acc in accounts %}
+            <div class="col-6 mb-3">
+                <div class="p-3 border rounded" style="background: #f8f9fa;">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div style="font-size: 0.9rem; color: #666;">{{ acc.name }}</div>
+                            <div class="mobile-h3">{{ "%.0f"|format(acc.balance) }} ₽</div>
+                        </div>
+                        <span class="badge {{ 'bg-success' if acc.balance >= acc.min_balance else 'bg-warning' }}">
+                            {{ 'OK' if acc.balance >= acc.min_balance else 'Low' }}
+                        </span>
+                    </div>
+                    {% if acc.min_balance and acc.min_balance > 0 %}
+                    <div class="mt-2" style="font-size: 0.8rem; color: #999;">
+                        <i class="fas fa-exclamation-circle me-1"></i>Мин: {{ "%.0f"|format(acc.min_balance) }} ₽
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Быстрые действия панель -->
+    <div class="mobile-card">
+        <h5 class="mobile-h4 mb-3">Быстрые действия</h5>
+        <div class="row g-2">
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #e3f2fd; color: #1976d2;"
+                        onclick="location.href='/operations?type=income'">
+                    <i class="fas fa-plus-circle me-2"></i>Доход
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #ffebee; color: #d32f2f;"
+                        onclick="location.href='/operations?type=expense'">
+                    <i class="fas fa-minus-circle me-2"></i>Расход
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #f3e5f5; color: #7b1fa2;"
+                        onclick="location.href='/reports'">
+                    <i class="fas fa-file-invoice me-2"></i>Отчет
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #e8f5e8; color: #388e3c;"
+                        onclick="location.href='/calendar'">
+                    <i class="fas fa-calendar-alt me-2"></i>Календарь
+                </button>
             </div>
         </div>
     </div>
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script>
-// Загружаем данные для графиков
-fetch('/api/operations_by_category')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('expenseChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'pie',
-            data: {
-                labels: data.map(item => item.category),
-                datasets: [{
-                    data: data.map(item => item.amount),
-                    backgroundColor: [
-                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                        '#9966FF', '#FF9F40', '#FF6384', '#C9CBCF'
-                    ]
-                }]
-            }
-        });
-    });
-
-fetch('/api/cash_flow')
-    .then(response => response.json())
-    .then(data => {
-        const ctx = document.getElementById('cashFlowChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: data.dates.map(d => d.substring(5)),
-                datasets: [
-                    {
-                        label: 'Доходы',
-                        data: data.income,
-                        borderColor: 'rgb(75, 192, 192)',
-                        tension: 0.1
+    // Простой график для мобильных
+    fetch('/api/expenses_by_category')
+        .then(response => response.json())
+        .then(data => {
+            if (data.categories.length > 0) {
+                const ctx = document.getElementById('expenseChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: data.categories,
+                        datasets: [{
+                            data: data.amounts,
+                            backgroundColor: [
+                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                                '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
+                            ],
+                            borderWidth: 1
+                        }]
                     },
-                    {
-                        label: 'Расходы',
-                        data: data.expense,
-                        borderColor: 'rgb(255, 99, 132)',
-                        tension: 0.1
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: {
+                                        size: 11
+                                    },
+                                    padding: 15
+                                }
+                            }
+                        }
                     }
-                ]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
-                    }
-                }
+                });
+            } else {
+                document.getElementById('expenseChart').parentElement.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-pie fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных для графика</p>
+                </div>
+            `;
             }
+        })
+        .catch(error => {
+            console.error('Error loading chart:', error);
+            document.getElementById('expenseChart').parentElement.innerHTML = `
+            <div class="text-center py-4">
+                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
+                <p class="text-muted">Не удалось загрузить график</p>
+            </div>
+        `;
         });
-    });
+
+    // Обновление данных каждые 30 секунд
+    setInterval(() => {
+        fetch('/')
+            .then(() => console.log('Dashboard updated'))
+            .catch(() => console.log('Update failed'));
+    }, 30000);
 </script>
 {% endblock %}
