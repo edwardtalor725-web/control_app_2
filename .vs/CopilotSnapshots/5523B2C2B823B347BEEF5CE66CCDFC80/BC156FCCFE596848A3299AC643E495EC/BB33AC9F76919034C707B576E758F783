@@ -1,0 +1,221 @@
+﻿{% extends "base.html" %}
+{% block title %}Отчеты{% endblock %}
+
+{% block content %}
+<div class="mobile-container">
+    <!-- Период отчета -->
+    <div class="mobile-card">
+        <h5 class="mobile-h4 mb-3">
+            <i class="fas fa-calendar-alt me-2"></i>Период отчета
+        </h5>
+        <form method="get" class="row g-2">
+            <div class="col-6">
+                <label class="form-label small">С даты</label>
+                <input type="date" name="start_date" class="mobile-input"
+                       value="{{ start_date }}">
+            </div>
+            <div class="col-6">
+                <label class="form-label small">По дату</label>
+                <input type="date" name="end_date" class="mobile-input"
+                       value="{{ end_date }}">
+            </div>
+            <div class="col-12 mt-2">
+                <button type="submit" class="mobile-btn mobile-btn-primary">
+                    <i class="fas fa-sync-alt me-2"></i>Обновить отчет
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Основные показатели -->
+    <div class="mobile-card">
+        <h5 class="mobile-h4 mb-3">
+            <i class="fas fa-chart-line me-2"></i>Основные показатели
+        </h5>
+
+        {% set total_income = income_by_category.values()|sum %}
+        {% set total_expense = expense_by_category.values()|sum %}
+        {% set profit = total_income - total_expense %}
+
+        <div class="row text-center">
+            <div class="col-4">
+                <div class="p-2">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #28a745;">
+                        {{ "%.0f"|format(total_income) }} ₽
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">
+                        <i class="fas fa-arrow-up me-1"></i>Доходы
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="p-2">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: #dc3545;">
+                        {{ "%.0f"|format(total_expense) }} ₽
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">
+                        <i class="fas fa-arrow-down me-1"></i>Расходы
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="p-2">
+                    <div style="font-size: 1.5rem; font-weight: 700; color: {{ '#28a745' if profit >= 0 else '#dc3545' }};">
+                        {{ "%.0f"|format(profit) }} ₽
+                    </div>
+                    <div style="font-size: 0.8rem; color: #666;">
+                        <i class="fas fa-chart-line me-1"></i>Прибыль
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Структура расходов -->
+    {% if expense_by_category %}
+    <div class="mobile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mobile-h4 mb-0">
+                <i class="fas fa-chart-pie me-2"></i>Структура расходов
+            </h5>
+            <span class="badge bg-primary">{{ expense_by_category|length }} категорий</span>
+        </div>
+
+        <div class="mb-3">
+            <canvas id="expenseChart" height="250"></canvas>
+        </div>
+
+        <!-- Детализация по категориям -->
+        <div class="mt-3">
+            {% for category, amount in expense_by_category.items() %}
+            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+                <div class="d-flex align-items-center">
+                    <div style="width: 12px; height: 12px; background: {{
+                        ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
+                        [loop.index0 % 6]
+                    }}; border-radius: 2px; margin-right: 10px;"></div>
+                    <span>{{ category }}</span>
+                </div>
+                <div>
+                    <strong>{{ "%.0f"|format(amount) }} ₽</strong>
+                    <div style="font-size: 0.8rem; color: #666; text-align: right;">
+                        {{ "%.1f"|format(amount/total_expense*100 if total_expense > 0 else 0) }}%
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Структура доходов -->
+    {% if income_by_category %}
+    <div class="mobile-card">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="mobile-h4 mb-0">
+                <i class="fas fa-chart-bar me-2"></i>Структура доходов
+            </h5>
+            <span class="badge bg-success">{{ income_by_category|length }} категорий</span>
+        </div>
+
+        <!-- Детализация по категориям -->
+        <div class="mt-2">
+            {% for category, amount in income_by_category.items() %}
+            <div class="mb-3">
+                <div class="d-flex justify-content-between mb-1">
+                    <span>{{ category }}</span>
+                    <span>{{ "%.0f"|format(amount) }} ₽ ({{ "%.1f"|format(amount/total_income*100 if total_income > 0 else 0) }}%)</span>
+                </div>
+                <div class="progress" style="height: 8px;">
+                    <div class="progress-bar bg-success"
+                         style="width: {{ amount/total_income*100 if total_income > 0 else 0 }}%">
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Экспорт отчета -->
+    <div class="mobile-card">
+        <h6 class="mobile-h4 mb-3">Экспорт отчета</h6>
+        <div class="row g-2">
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #f8f9fa;">
+                    <i class="fas fa-file-pdf me-2"></i>PDF
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #f8f9fa;">
+                    <i class="fas fa-file-excel me-2"></i>Excel
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #f8f9fa;">
+                    <i class="fas fa-print me-2"></i>Печать
+                </button>
+            </div>
+            <div class="col-6">
+                <button class="mobile-btn" style="background: #f8f9fa;">
+                    <i class="fas fa-share-alt me-2"></i>Поделиться
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// График расходов
+document.addEventListener('DOMContentLoaded', function() {
+    const expenseData = {{ expense_by_category|tojson }};
+    const labels = Object.keys(expenseData);
+    const data = Object.values(expenseData);
+
+    if (labels.length > 0) {
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: data,
+                    backgroundColor: [
+                        '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
+                        '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            boxWidth: 12,
+                            font: {
+                                size: 10
+                            },
+                            padding: 15
+                        }
+                    }
+                }
+            }
+        });
+    }
+});
+
+// Автообновление отчета
+let autoRefresh = false;
+
+if (autoRefresh) {
+    setInterval(() => {
+        window.location.reload();
+    }, 60000); // Каждую минуту
+}
+</script>
+{% endblock %}

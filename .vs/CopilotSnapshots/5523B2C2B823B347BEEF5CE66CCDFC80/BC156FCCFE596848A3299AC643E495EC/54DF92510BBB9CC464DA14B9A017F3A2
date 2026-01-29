@@ -1,0 +1,125 @@
+﻿{% extends "base.html" %}
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="mobile-container" style="max-width: 400px; margin: 0 auto;">
+    <div class="text-center mb-4">
+        <div class="action-icon action-add" style="width: 60px; height: 60px; margin: 0 auto 20px;">
+            <i class="fas fa-lock fa-2x"></i>
+        </div>
+        <h1 class="mobile-h1">Финансовый контроль</h1>
+        <p class="text-muted">Вход в систему</p>
+    </div>
+
+    <div class="mobile-card">
+        <form method="post" id="loginForm">
+            <div class="mb-3">
+                <label class="form-label mb-2">
+                    <i class="fas fa-user me-2"></i>Имя пользователя
+                </label>
+                <input type="text" name="username" class="mobile-input"
+                       placeholder="Введите имя пользователя" required
+                       autocapitalize="off" autocomplete="username">
+            </div>
+
+            <div class="mb-4">
+                <label class="form-label mb-2">
+                    <i class="fas fa-key me-2"></i>Пароль
+                </label>
+                <div class="position-relative">
+                    <input type="password" name="password" id="password"
+                           class="mobile-input" placeholder="Введите пароль" required
+                           autocomplete="current-password">
+                    <button type="button" class="btn btn-link password-toggle"
+                            onclick="togglePassword()"
+                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <button type="submit" class="mobile-btn mobile-btn-primary">
+                <i class="fas fa-sign-in-alt me-2"></i>Войти в систему
+            </button>
+
+            <div class="text-center mt-3">
+                <a href="#" class="text-muted" style="font-size: 0.9rem;">
+                    <i class="fas fa-question-circle me-1"></i>Забыли пароль?
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Тестовые пользователи -->
+    <div class="mobile-card mt-3">
+        <h6 class="mobile-h4 mb-3">
+            <i class="fas fa-users me-2"></i>Тестовые пользователи
+        </h6>
+        <div class="row g-2">
+            <div class="col-12">
+                <div class="p-3 border rounded mb-2" style="background: #f0f7ff;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Владелец</strong>
+                            <div style="font-size: 0.9rem; color: #666;">
+                                admin / admin123
+                            </div>
+                        </div>
+                        <span class="badge bg-primary">Полный доступ</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="p-3 border rounded mb-2" style="background: #fff3e0;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Бухгалтер</strong>
+                            <div style="font-size: 0.9rem; color: #666;">
+                                accountant / 123456
+                            </div>
+                        </div>
+                        <span class="badge bg-warning">Только учет</span>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12">
+                <div class="p-3 border rounded" style="background: #f3e5f5;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <strong>Менеджер</strong>
+                            <div style="font-size: 0.9rem; color: #666;">
+                                manager / 123456
+                            </div>
+                        </div>
+                        <span class="badge bg-info">Только просмотр</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Советы по безопасности -->
+    <div class="mt-4 text-center">
+        <div style="font-size: 0.8rem; color: #999;">
+            <i class="fas fa-shield-alt me-1"></i>Ваши данные защищены
+        </div>
+    </div>
+</div>
+
+<script>
+// Автофокус на поле ввода
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('input[name="username"]').focus();
+
+    // Анимация формы
+    const form = document.getElementById('loginForm');
+    form.addEventListener('submit', function() {
+        const btn = this.querySelector('button[type="submit"]');
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Вход...';
+        btn.disabled = true;
+    });
+});
+
+// Функция togglePassword уже определена в base.html
+</script>
+{% endblock %}

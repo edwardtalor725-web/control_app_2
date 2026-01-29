@@ -1,0 +1,415 @@
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+from flask_login import LoginManager, login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, date, timedelta
+import json
+import os
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin
+
+# Инициализация Flask
+app = Flask(__name__)
+app.config['SECRET_KEY'] = 'dev-secret-key-123'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Инициализация базы данных
+db = SQLAlchemy(app)
+login_manager = LoginManager()
+login_manager.init_app(app)
+login_manager.login_view = 'login'
+
+# ---------- Модели базы данных ----------
+class User(UserMixin, db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64), unique=True, nullable=False)
+    email = db.Column(db.String(120), unique=True, nullable=False)
+    password_hash = db.Column(db.String(256))
+    role = db.Column(db.String(20), nullable=False, default='manager')
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Counterparty(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    type = db.Column(db.String(20), nullable=False)  # client, supplier
+    contact_info = db.Column(db.String(200))
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+class Operation(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(10), nullable=False)  # income, expense
+    amount = db.Column(db.Float, nullable=False)
+    category = db.Column(db.String(50), nullable=False)
+    description = db.Column(db.String(200))
+    date = db.Column(db.Date, nullable=False, default=date.today)
+    is_planned = db.Column(db.Boolean, default=False)
+    planned_date = db.Column(db.Date)
+    status = db.Column(db.String(20), default='completed')
+    user_id = db.Column(db.Integer, nullable=False)
+    counterparty_id = db.Column(db.Integer)
+
+class Account(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    balance = db.Column(db.Float, default=0.0)
+    min_balance = db.Column(db.Float, default=0.0)
+    currency = db.Column(db.String(3), default='RUB')
+
+class Comment(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, nullable=False)
+    operation_id = db.Column(db.Integer, nullable=False)
+
+class Notification(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    type = db.Column(db.String(20), nullable=False)
+    message = db.Column(db.String(200), nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    user_id = db.Column(db.Integer, nullable=False)
+
+# Конфигурация
+CATEGORIES = {
+    'income': ['Продажи', 'Услуги', 'Инвестиции', 'Прочее'],
+    'expense': ['Сырье', 'Аренда', 'Зарплата', 'Налоги', 'Коммунальные', 'Транспорт', 'Реклама', 'Прочее']
+}
+
+ROLES = {
+    'owner': 'Владелец',
+    'accountant': 'Бухгалтер', 
+    'manager': 'Менеджер'
+}
+
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
+
+# ---------- Вспомогательные функции ----------
+def check_permission(required_role):
+    roles_hierarchy = {'owner': 3, 'accountant': 2, 'manager': 1}
+    user_role = current_user.role if current_user else 'manager'
+    return roles_hierarchy.get(user_role, 0) >= roles_hierarchy.get(required_role, 0)
+
+# ---------- Маршруты аутентификации ----------
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        
+        if user and check_password_hash(user.password_hash, password):
+            login_user(user)
+            return redirect(url_for('dashboard'))
+        flash('Неверное имя пользователя или пароль')
+    return render_template('login.html')
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('login'))
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    if request.method == 'POST':
+        username = request.form['username']
+        email = request.form['email']
+        password = request.form['password']
+        role = request.form.get('role', 'manager')
+        
+        if User.query.filter_by(username=username).first():
+            flash('Пользователь уже существует')
+            return redirect(url_for('register'))
+        
+        user = User(
+            username=username,
+            email=email,
+            password_hash=generate_password_hash(password),
+            role=role
+        )
+        db.session.add(user)
+        db.session.commit()
+        
+        flash('Регистрация успешна!')
+        return redirect(url_for('login'))
+    return render_template('register.html')
+
+# ---------- Основные маршруты ----------
+@app.route('/')
+@login_required
+def dashboard():
+    today = date.today()
+    start_of_month = today.replace(day=1)
+    
+    # Доходы и расходы за месяц
+    monthly_income = db.session.query(db.func.sum(Operation.amount)).filter(
+        Operation.type == 'income', 
+        Operation.date >= start_of_month,
+        Operation.status == 'completed'
+    ).scalar() or 0
+    
+    monthly_expense = db.session.query(db.func.sum(Operation.amount)).filter(
+        Operation.type == 'expense',
+        Operation.date >= start_of_month,
+        Operation.status == 'completed'
+    ).scalar() or 0
+    
+    profit = monthly_income - monthly_expense
+    
+    # Последние операции
+    recent_operations = Operation.query.filter(
+        Operation.status == 'completed'
+    ).order_by(Operation.date.desc()).limit(10).all()
+    
+    # Счета
+    accounts = Account.query.all()
+    
+    # Уведомления
+    notifications = Notification.query.filter_by(
+        user_id=current_user.id, is_read=False
+    ).order_by(Notification.created_at.desc()).limit(5).all()
+    
+    return render_template('dashboard.html',
+                         income=monthly_income,
+                         expense=monthly_expense,
+                         profit=profit,
+                         operations=recent_operations,
+                         accounts=accounts,
+                         notifications=notifications,
+                         today=date.today())  # Добавил today
+
+@app.route('/operations', methods=['GET', 'POST'])
+@login_required
+def operations():
+    if request.method == 'POST':
+        if not check_permission('accountant'):
+            flash('Недостаточно прав')
+            return redirect(url_for('operations'))
+        
+        operation = Operation(
+            type=request.form['type'],
+            amount=float(request.form['amount']),
+            category=request.form['category'],
+            description=request.form['description'],
+            date=datetime.strptime(request.form['date'], '%Y-%m-%d').date(),
+            is_planned='is_planned' in request.form,
+            planned_date=datetime.strptime(request.form['planned_date'], '%Y-%m-%d').date() if request.form.get('planned_date') else None,
+            status='planned' if 'is_planned' in request.form else 'completed',
+            user_id=current_user.id,
+            counterparty_id=request.form['counterparty_id'] if request.form.get('counterparty_id') else None
+        )
+        
+        db.session.add(operation)
+        db.session.commit()
+        flash('Операция добавлена')
+        return redirect(url_for('operations'))
+    
+    # Фильтрация операций
+    operations_query = Operation.query
+    
+    if request.args.get('type'):
+        operations_query = operations_query.filter_by(type=request.args['type'])
+    if request.args.get('start_date'):
+        start_date = datetime.strptime(request.args['start_date'], '%Y-%m-%d').date()
+        operations_query = operations_query.filter(Operation.date >= start_date)
+    if request.args.get('end_date'):
+        end_date = datetime.strptime(request.args['end_date'], '%Y-%m-%d').date()
+        operations_query = operations_query.filter(Operation.date <= end_date)
+    
+    operations = operations_query.order_by(Operation.date.desc()).all()
+    counterparties = Counterparty.query.all()
+    
+    return render_template('operations.html',
+                         operations=operations,
+                         counterparties=counterparties,
+                         categories=CATEGORIES,
+                         today=date.today())  # Добавил today
+
+@app.route('/calendar')
+@login_required
+def calendar():
+    planned_operations = Operation.query.filter(
+        Operation.is_planned == True,
+        Operation.status.in_(['planned', 'pending'])
+    ).order_by(Operation.planned_date).all()
+    
+    events = []
+    for op in planned_operations:
+        events.append({
+            'id': op.id,
+            'title': f"{'Доход' if op.type == 'income' else 'Расход'}: {op.description[:30]} - {op.amount} руб.",
+            'start': op.planned_date.isoformat() if op.planned_date else op.date.isoformat(),
+            'color': 'green' if op.type == 'income' else 'red'
+        })
+    
+    return render_template('calendar.html', events=json.dumps(events), today=date.today())
+
+@app.route('/reports')
+@login_required
+def reports():
+    today = date.today()
+    start_date = request.args.get('start_date', today.replace(day=1).isoformat())
+    end_date = request.args.get('end_date', today.isoformat())
+    
+    start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
+    end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
+    
+    operations = Operation.query.filter(
+        Operation.date.between(start_date, end_date),
+        Operation.status == 'completed'
+    ).all()
+    
+    expense_by_category = {}
+    income_by_category = {}
+    
+    for op in operations:
+        if op.type == 'expense':
+            expense_by_category[op.category] = expense_by_category.get(op.category, 0) + op.amount
+        else:
+            income_by_category[op.category] = income_by_category.get(op.category, 0) + op.amount
+    
+    return render_template('reports.html',
+                         operations=operations,
+                         expense_by_category=expense_by_category,
+                         income_by_category=income_by_category,
+                         start_date=start_date,
+                         end_date=end_date,
+                         today=date.today())
+
+@app.route('/users')
+@login_required
+def users():
+    if not check_permission('owner'):
+        flash('Только владелец может управлять пользователями')
+        return redirect(url_for('dashboard'))
+    
+    users_list = User.query.all()
+    return render_template('users.html', users=users_list, today=date.today())
+
+# ---------- API маршруты ----------
+@app.route('/api/add_comment', methods=['POST'])
+@login_required
+def add_comment():
+    data = request.json
+    comment = Comment(
+        text=data['text'],
+        user_id=current_user.id,
+        operation_id=data['operation_id']
+    )
+    db.session.add(comment)
+    db.session.commit()
+    return jsonify({'success': True})
+
+@app.route('/api/operations_by_category')
+@login_required
+def operations_by_category():
+    data = []
+    for cat in CATEGORIES['expense']:
+        total = db.session.query(db.func.sum(Operation.amount)).filter(
+            Operation.category == cat,
+            Operation.type == 'expense',
+            Operation.status == 'completed'
+        ).scalar() or 0
+        if total > 0:
+            data.append({'category': cat, 'amount': total})
+    return jsonify(data)
+
+@app.route('/api/cash_flow')
+@login_required
+def cash_flow():
+    end_date = date.today()
+    start_date = end_date - timedelta(days=30)
+    
+    dates = []
+    income_data = []
+    expense_data = []
+    
+    current_date = start_date
+    while current_date <= end_date:
+        dates.append(current_date.isoformat())
+        
+        daily_income = db.session.query(db.func.sum(Operation.amount)).filter(
+            Operation.type == 'income',
+            Operation.date == current_date,
+            Operation.status == 'completed'
+        ).scalar() or 0
+        
+        daily_expense = db.session.query(db.func.sum(Operation.amount)).filter(
+            Operation.type == 'expense',
+            Operation.date == current_date,
+            Operation.status == 'completed'
+        ).scalar() or 0
+        
+        income_data.append(daily_income)
+        expense_data.append(daily_expense)
+        
+        current_date += timedelta(days=1)
+    
+    return jsonify({
+        'dates': dates,
+        'income': income_data,
+        'expense': expense_data
+    })
+
+# ---------- Инициализация базы данных ----------
+def init_database():
+    with app.app_context():
+        db.create_all()
+        
+        if not User.query.first():
+            # Создаем владельца
+            owner = User(
+                username='admin',
+                email='admin@example.com',
+                password_hash=generate_password_hash('admin123'),
+                role='owner'
+            )
+            db.session.add(owner)
+            
+            # Создаем бухгалтера
+            accountant = User(
+                username='accountant',
+                email='accountant@example.com',
+                password_hash=generate_password_hash('123456'),
+                role='accountant'
+            )
+            db.session.add(accountant)
+            
+            # Создаем менеджера
+            manager = User(
+                username='manager',
+                email='manager@example.com',
+                password_hash=generate_password_hash('123456'),
+                role='manager'
+            )
+            db.session.add(manager)
+            
+            # Создаем тестовые счета
+            accounts = [
+                Account(name='Основной счет', balance=100000, min_balance=50000),
+                Account(name='Резервный счет', balance=50000, min_balance=10000)
+            ]
+            for acc in accounts:
+                db.session.add(acc)
+            
+            # Создаем тестовых контрагентов
+            counterparties = [
+                Counterparty(name='ООО "Поставщик"', type='supplier', contact_info='+7 999 123-45-67'),
+                Counterparty(name='ИП Иванов', type='client', contact_info='ivanov@mail.ru'),
+                Counterparty(name='ООО "Клиент Плюс"', type='client', contact_info='+7 495 123-45-67')
+            ]
+            for cp in counterparties:
+                db.session.add(cp)
+            
+            db.session.commit()
+            print("База данных инициализирована с тестовыми данными")
+
+# Инициализируем БД при запуске
+init_database()
+
+if __name__ == '__main__':
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
