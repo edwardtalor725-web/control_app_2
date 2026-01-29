@@ -8,7 +8,7 @@
         <button class="mobile-btn mobile-btn-primary me-2" onclick="location.href='/operations'">
             <i class="fas fa-plus me-2"></i>Добавить операцию
         </button>
-        <button class="mobile-btn" style="background: #e9ecef; color: #333;" onclick="location.href='/reports'">
+        <button class="mobile-btn" onclick="location.href='/reports'" style="background:var(--light-color);color:var(--dark-color);">
             <i class="fas fa-chart-bar me-2"></i>Отчеты
         </button>
     </div>
@@ -21,9 +21,9 @@
                     <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
                         <i class="fas fa-arrow-up me-1"></i>Доходы
                     </div>
-                    <div class="mobile-h2" style="color: #28a745;">{{ "%.0f"|format(income) }} ₽</div>
+                    <div class="mobile-h2 text-success">{{ "%.0f"|format(income) }} ₽</div>
                 </div>
-                <div class="action-icon" style="background: #28a745;">
+                <div class="action-icon action-add" style="background: #28a745;">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                     <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
                         <i class="fas fa-arrow-down me-1"></i>Расходы
                     </div>
-                    <div class="mobile-h2" style="color: #dc3545;">{{ "%.0f"|format(expense) }} ₽</div>
+                    <div class="mobile-h2 text-danger">{{ "%.0f"|format(expense) }} ₽</div>
                 </div>
                 <div class="action-icon" style="background: #dc3545;">
                     <i class="fas fa-shopping-cart"></i>
@@ -49,7 +49,7 @@
                     <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
                         <i class="fas fa-chart-line me-1"></i>Прибыль
                     </div>
-                    <div class="mobile-h2" style="color: #17a2b8;">{{ "%.0f"|format(profit) }} ₽</div>
+                    <div class="mobile-h2 text-info">{{ "%.0f"|format(profit) }} ₽</div>
                 </div>
                 <div class="action-icon" style="background: #17a2b8;">
                     <i class="fas fa-coins"></i>
@@ -187,17 +187,55 @@
 {% block extra_js %}
 <script>
     // Простой график для мобильных
-    fetch('/api/expenses_by_category')
+    // Load expenses data and render chart. Support both new {categories,amounts}
+    // and older list-based payloads.
+    fetch('/api/operations_by_category')
         .then(response => response.json())
-        .then(data => {
-            if (data.categories.length > 0) {
+        .then(payload => {
+            let labels = [];
+            let values = [];
+
+            if (Array.isArray(payload)) {
+                // older list format
+                payload.forEach(item => {
+                    labels.push(item.category);
+                    values.push(item.amount);
+                });
+            } else if (payload.categories && payload.amounts) {
+                labels = payload.categories;
+                values = payload.amounts;
+            }
+
+            if (labels.length === 0) {
+                document.getElementById('expenseChart').parentElement.innerHTML = `
+                <div class="text-center py-4">
+                    <i class="fas fa-chart-pie fa-2x text-muted mb-3"></i>
+                    <p class="text-muted">Нет данных для графика</p>
+                </div>`;
+                return;
+            }
+
+            // Lazy-load Chart.js and render
+            function loadChart() {
+                if (window.Chart) return Promise.resolve();
+                return new Promise((resolve, reject) => {
+                    const s = document.createElement('script');
+                    s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
+                    s.async = true;
+                    s.onload = resolve;
+                    s.onerror = reject;
+                    document.head.appendChild(s);
+                });
+            }
+
+            loadChart().then(() => {
                 const ctx = document.getElementById('expenseChart').getContext('2d');
                 new Chart(ctx, {
                     type: 'doughnut',
                     data: {
-                        labels: data.categories,
+                        labels: labels,
                         datasets: [{
-                            data: data.amounts,
+                            data: values,
                             backgroundColor: [
                                 '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
                                 '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
@@ -209,36 +247,21 @@
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {
-                            legend: {
-                                position: 'bottom',
-                                labels: {
-                                    boxWidth: 12,
-                                    font: {
-                                        size: 11
-                                    },
-                                    padding: 15
-                                }
-                            }
+                            legend: { position: 'bottom' }
                         }
                     }
                 });
-            } else {
-                document.getElementById('expenseChart').parentElement.innerHTML = `
-                <div class="text-center py-4">
-                    <i class="fas fa-chart-pie fa-2x text-muted mb-3"></i>
-                    <p class="text-muted">Нет данных для графика</p>
-                </div>
-            `;
-            }
+            }).catch(err => {
+                console.error('Chart.js load failed', err);
+            });
         })
         .catch(error => {
-            console.error('Error loading chart:', error);
+            console.error('Error loading chart data:', error);
             document.getElementById('expenseChart').parentElement.innerHTML = `
             <div class="text-center py-4">
                 <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
                 <p class="text-muted">Не удалось загрузить график</p>
-            </div>
-        `;
+            </div>`;
         });
 
     // Обновление данных каждые 30 секунд
