@@ -1,0 +1,53 @@
+/* Global mobile-first stylesheet for the app */
+:root{
+  --primary: #4361ee;
+  --secondary: #3a0ca3;
+  --accent: #4cc9f0;
+  --success: #28a745;
+  --danger: #f72585;
+  --muted: #6c757d;
+  --bg: #f5f7fa;
+  --card-bg: #ffffff;
+}
+
+html,body{
+  height:100%;
+  background: var(--bg);
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+
+/* Header */
+.mobile-header h1{font-size:1.15rem;margin:0;font-weight:700;}
+.mobile-header{padding:14px 16px}
+
+/* Cards */
+.mobile-card{background:var(--card-bg);border-radius:14px;padding:18px;margin-bottom:14px;box-shadow:0 6px 18px rgba(33,37,41,0.06);border:1px solid rgba(0,0,0,0.03)}
+
+/* Buttons */
+.mobile-btn{border-radius:12px;padding:12px 14px;font-weight:600;font-size:15px}
+.mobile-btn-primary{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;border:none}
+.mobile-btn:focus{outline:3px solid rgba(67,97,238,0.12)}
+
+/* Action icon (login) */
+.action-icon{width:60px;height:60px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:22px}
+.action-add{background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff}
+
+/* Test users cards */
+.test-user-card{padding:14px;border-radius:10px;border:1px solid rgba(0,0,0,0.04);display:flex;justify-content:space-between;align-items:center}
+.test-owner{background:linear-gradient(90deg, rgba(67,97,238,0.06), rgba(67,97,238,0.02))}
+.test-accountant{background:linear-gradient(90deg, rgba(248,142,30,0.06), rgba(248,142,30,0.02))}
+.test-manager{background:linear-gradient(90deg, rgba(154,90,229,0.06), rgba(154,90,229,0.02))}
+
+/* Responsive container */
+.mobile-container{max-width:820px;margin:0 auto;padding:20px 16px}
+
+/* Mobile nav */
+.mobile-nav{padding:10px 0}
+.mobile-nav-item{font-size:0.85rem}
+
+/* Tiny screens adjustments */
+@media (max-width:360px){
+  .mobile-card{padding:14px}
+  .mobile-btn{font-size:14px;padding:10px}
+}
