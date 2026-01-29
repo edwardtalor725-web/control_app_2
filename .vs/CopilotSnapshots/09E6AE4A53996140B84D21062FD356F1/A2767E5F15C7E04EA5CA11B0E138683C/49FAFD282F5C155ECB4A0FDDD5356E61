@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Операции{% endblock %}
 
 {% block content %}
@@ -52,7 +52,7 @@
                 </thead>
                 <tbody>
                     {% for op in operations %}
-                    <tr style="cursor: pointer;">
+                    <tr onclick="showOperationDetails({{ op.id }})" style="cursor: pointer;">
                         <td>
                             <div style="font-size: 0.9rem;">
                                 {{ op.op_date if op.op_date else op.date }}
@@ -75,11 +75,6 @@
                                 {{ op.description[:15] }}{% if op.description|length > 15 %}...{% endif %}
                             </div>
                             {% endif %}
-                            <div class="mt-2">
-                                <form method="post" action="/operations/delete/{{ op.id }}" onsubmit="return confirm('Удалить операцию?');" style="display:inline;">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
-                                </form>
-                            </div>
                         </td>
                     </tr>
                     {% endfor %}

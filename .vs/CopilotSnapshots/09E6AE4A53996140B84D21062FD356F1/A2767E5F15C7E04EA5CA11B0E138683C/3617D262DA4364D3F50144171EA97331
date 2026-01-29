@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -377,43 +377,15 @@
     <div class="mobile-header d-md-none">
         <div class="d-flex justify-content-between align-items-center">
             <h1>💰 Финансовый контроль</h1>
+            {% if session.username %}
             <div class="d-flex align-items-center">
-                {% if session.username %}
-                <button class="btn btn-sm btn-outline-light me-2" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
-                    <i class="fas fa-bars"></i>
-                </button>
                 <span class="me-2" style="font-size: 0.9rem;">{{ session.username }}</span>
                 <a href="/logout" class="btn btn-sm btn-outline-light">
                     <i class="fas fa-sign-out-alt"></i>
                 </a>
-                {% else %}
-                <a href="/login" class="btn btn-sm btn-outline-light">
-                    <i class="fas fa-sign-in-alt"></i>
-                </a>
-                {% endif %}
             </div>
+            {% endif %}
         </div>
-    </div>
-
-    <!-- Offcanvas mobile menu -->
-    <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
-      <div class="offcanvas-header">
-        <h5 class="offcanvas-title">Меню</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
-      </div>
-      <div class="offcanvas-body">
-        <div class="list-group">
-          <a href="/" class="list-group-item list-group-item-action">Дашборд</a>
-          <a href="/operations" class="list-group-item list-group-item-action">Операции</a>
-          <a href="/reports" class="list-group-item list-group-item-action">Отчеты</a>
-          <a href="/calendar" class="list-group-item list-group-item-action">Календарь</a>
-          {% if session.username %}
-          <a href="/logout" class="list-group-item list-group-item-action list-group-item-danger">Выйти</a>
-          {% else %}
-          <a href="/login" class="list-group-item list-group-item-action list-group-item-primary">Войти</a>
-          {% endif %}
-        </div>
-      </div>
     </div>
 
     <!-- Десктопная навигация (скрыта на мобильных) -->

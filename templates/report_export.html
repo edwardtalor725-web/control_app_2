@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Экспорт отчета{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h3>Отчет за период {{ start_date }} - {{ end_date }}</h3>
+    <table class="table table-sm table-striped mt-3">
+        <thead>
+            <tr><th>Дата</th><th>Тип</th><th>Сумма</th><th>Категория</th><th>Описание</th></tr>
+        </thead>
+        <tbody>
+            {% for op in operations %}
+            <tr>
+                <td>{{ op.date }}</td>
+                <td>{{ op.type }}</td>
+                <td>{{ op.amount }}</td>
+                <td>{{ op.category }}</td>
+                <td>{{ op.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
@@ -281,59 +281,6 @@ def reports():
                          end_date=end_date,
                          today=date.today())
 
-
-@app.route('/reports/export')
-@login_required
-def reports_export():
-    fmt = request.args.get('format', 'csv')
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
-    try:
-        start_date = datetime.strptime(start_date, '%Y-%m-%d').date() if start_date else date.today().replace(day=1)
-        end_date = datetime.strptime(end_date, '%Y-%m-%d').date() if end_date else date.today()
-    except Exception:
-        start_date = date.today().replace(day=1)
-        end_date = date.today()
-
-    operations = Operation.query.filter(
-        Operation.date.between(start_date, end_date),
-        Operation.status == 'completed'
-    ).order_by(Operation.date).all()
-
-    if fmt == 'csv' or fmt == 'excel':
-        # Generate CSV
-        import io, csv
-        output = io.StringIO()
-        writer = csv.writer(output)
-        writer.writerow(['Дата', 'Тип', 'Сумма', 'Категория', 'Описание'])
-        for op in operations:
-            writer.writerow([op.date.isoformat(), op.type, op.amount, op.category, op.description or ''])
-        output.seek(0)
-        return (output.getvalue(), 200, {
-            'Content-Type': 'text/csv; charset=utf-8',
-            'Content-Disposition': f'attachment; filename="report_{start_date}_{end_date}.csv"'
-        })
-
-    if fmt == 'pdf':
-        # Try to render PDF using pdfkit if available, otherwise return HTML for printing
-        rendered = render_template('report_export.html', operations=operations, start_date=start_date, end_date=end_date)
-        try:
-            import pdfkit
-            pdf = pdfkit.from_string(rendered, False)
-            return (pdf, 200, {
-                'Content-Type': 'application/pdf',
-                'Content-Disposition': f'attachment; filename="report_{start_date}_{end_date}.pdf"'
-            })
-        except Exception:
-            # Fallback: return HTML with attachment so user can save/print
-            return (rendered, 200, {
-                'Content-Type': 'text/html; charset=utf-8',
-                'Content-Disposition': f'attachment; filename="report_{start_date}_{end_date}.html"'
-            })
-
-    # print or other formats - render printable HTML
-    return render_template('report_export.html', operations=operations, start_date=start_date, end_date=end_date)
-
 @app.route('/users')
 @login_required
 def users():
@@ -363,21 +310,6 @@ def add_comment():
     db.session.add(comment)
     db.session.commit()
     return jsonify({'success': True})
-
-
-@app.route('/operations/delete/<int:op_id>', methods=['POST'])
-@login_required
-def delete_operation(op_id):
-    # Only accountants and owners can delete operations
-    if not check_permission('accountant'):
-        flash('Недостаточно прав для удаления')
-        return redirect(url_for('operations'))
-
-    op = Operation.query.get_or_404(op_id)
-    db.session.delete(op)
-    db.session.commit()
-    flash('Операция удалена')
-    return redirect(url_for('operations'))
 
 @app.route('/api/operations_by_category')
 @login_required

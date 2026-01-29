@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Отчеты{% endblock %}
 
 {% block content %}
@@ -142,22 +142,22 @@
         <h6 class="mobile-h4 mb-3">Экспорт отчета</h6>
         <div class="row g-2">
             <div class="col-6">
-                <a class="mobile-btn d-block text-center" style="background: #f8f9fa;" href="/reports/export?format=pdf&start_date={{ start_date }}&end_date={{ end_date }}">
+                <button class="mobile-btn" style="background: #f8f9fa;">
                     <i class="fas fa-file-pdf me-2"></i>PDF
-                </a>
+                </button>
             </div>
             <div class="col-6">
-                <a class="mobile-btn d-block text-center" style="background: #f8f9fa;" href="/reports/export?format=excel&start_date={{ start_date }}&end_date={{ end_date }}">
+                <button class="mobile-btn" style="background: #f8f9fa;">
                     <i class="fas fa-file-excel me-2"></i>Excel
-                </a>
+                </button>
             </div>
             <div class="col-6">
-                <button class="mobile-btn" style="background: #f8f9fa;" onclick="window.print()">
+                <button class="mobile-btn" style="background: #f8f9fa;">
                     <i class="fas fa-print me-2"></i>Печать
                 </button>
             </div>
             <div class="col-6">
-                <button class="mobile-btn" style="background: #f8f9fa;" onclick="navigator.share && navigator.share({title: 'Отчет', text: 'Смотрите отчет', url: window.location.href})">
+                <button class="mobile-btn" style="background: #f8f9fa;">
                     <i class="fas fa-share-alt me-2"></i>Поделиться
                 </button>
             </div>

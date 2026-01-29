@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
+﻿from flask import Flask, render_template, request, jsonify, redirect, url_for, flash
 from flask_login import LoginManager, login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, date, timedelta
@@ -363,21 +363,6 @@ def add_comment():
     db.session.add(comment)
     db.session.commit()
     return jsonify({'success': True})
-
-
-@app.route('/operations/delete/<int:op_id>', methods=['POST'])
-@login_required
-def delete_operation(op_id):
-    # Only accountants and owners can delete operations
-    if not check_permission('accountant'):
-        flash('Недостаточно прав для удаления')
-        return redirect(url_for('operations'))
-
-    op = Operation.query.get_or_404(op_id)
-    db.session.delete(op)
-    db.session.commit()
-    flash('Операция удалена')
-    return redirect(url_for('operations'))
 
 @app.route('/api/operations_by_category')
 @login_required
