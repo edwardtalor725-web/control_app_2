@@ -9,8 +9,9 @@ from flask_login import UserMixin
 
 # Инициализация Flask
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'dev-secret-key-123'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+# Use environment variables for configuration with sensible defaults for local dev
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-123')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Инициализация базы данных
@@ -289,6 +290,12 @@ def users():
     users_list = User.query.all()
     return render_template('users.html', users=users_list, today=date.today())
 
+
+@app.route('/health')
+def health():
+    """Health-check endpoint for render/other platforms."""
+    return jsonify({'status': 'ok', 'uptime': True}), 200
+
 # ---------- API маршруты ----------
 @app.route('/api/add_comment', methods=['POST'])
 @login_required
@@ -407,8 +414,18 @@ def init_database():
             db.session.commit()
             print("База данных инициализирована с тестовыми данными")
 
-# Инициализируем БД при запуске
-init_database()
+def ensure_database_initialized():
+    """Initialize sqlite DB automatically if the file doesn't exist.
+    For production databases (Postgres, etc.) do not attempt automatic seeding.
+    """
+    uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
+    if uri.startswith('sqlite:///'):
+        db_path = uri.replace('sqlite:///', '', 1)
+        if not os.path.exists(db_path):
+            init_database()
+
+# Ensure DB exists for local sqlite deployments (safe no-op for other DBs)
+ensure_database_initialized()
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
