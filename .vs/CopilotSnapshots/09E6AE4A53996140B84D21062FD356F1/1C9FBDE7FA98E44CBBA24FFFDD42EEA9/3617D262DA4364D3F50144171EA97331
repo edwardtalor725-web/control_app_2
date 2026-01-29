@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
@@ -31,7 +31,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(180deg, #f3f6ff 0%, #f8fbff 100%);
+            background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
             padding-bottom: 70px; /* Для нижнего меню */
@@ -235,7 +235,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background: linear-gradient(135deg, rgba(67,97,238,0.95), rgba(58,12,163,0.95));
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
             color: white;
             z-index: 1000;
             padding: 15px;
@@ -382,19 +382,14 @@
                 <button class="btn btn-sm btn-outline-light me-2" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
                     <i class="fas fa-bars"></i>
                 </button>
-                <div class="d-flex flex-column text-end me-2" style="font-size:0.85rem;">
-                    <strong style="line-height:1;">{{ session.username }}</strong>
-                    <small style="opacity:0.9;">{{ session.role }}</small>
-                </div>
-                <a href="/logout" class="btn btn-sm btn-outline-light" title="Выйти">
-                    <i class="fas fa-right-from-bracket"></i>
+                <span class="me-2" style="font-size: 0.9rem;">{{ session.username }}</span>
+                <a href="/logout" class="btn btn-sm btn-outline-light">
+                    <i class="fas fa-sign-out-alt"></i>
                 </a>
                 {% else %}
-                {% if request.path != '/login' and request.path != '/register' %}
                 <a href="/login" class="btn btn-sm btn-outline-light">
-                    <i class="fas fa-right-to-bracket"></i>
+                    <i class="fas fa-sign-in-alt"></i>
                 </a>
-                {% endif %}
                 {% endif %}
             </div>
         </div>
@@ -402,20 +397,20 @@
 
     <!-- Offcanvas mobile menu -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
-      <div class="offcanvas-header bg-primary text-white">
+      <div class="offcanvas-header">
         <h5 class="offcanvas-title">Меню</h5>
-        <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
+        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"></button>
       </div>
-      <div class="offcanvas-body p-0">
-        <div class="list-group list-group-flush">
-          <a href="/" class="list-group-item list-group-item-action"><i class="fas fa-home me-2"></i>Дашборд</a>
-          <a href="/operations" class="list-group-item list-group-item-action"><i class="fas fa-exchange-alt me-2"></i>Операции</a>
-          <a href="/reports" class="list-group-item list-group-item-action"><i class="fas fa-chart-bar me-2"></i>Отчеты</a>
-          <a href="/calendar" class="list-group-item list-group-item-action"><i class="fas fa-calendar-alt me-2"></i>Календарь</a>
+      <div class="offcanvas-body">
+        <div class="list-group">
+          <a href="/" class="list-group-item list-group-item-action">Дашборд</a>
+          <a href="/operations" class="list-group-item list-group-item-action">Операции</a>
+          <a href="/reports" class="list-group-item list-group-item-action">Отчеты</a>
+          <a href="/calendar" class="list-group-item list-group-item-action">Календарь</a>
           {% if session.username %}
-          <a href="/logout" class="list-group-item list-group-item-action text-danger"><i class="fas fa-right-from-bracket me-2"></i>Выйти</a>
+          <a href="/logout" class="list-group-item list-group-item-action list-group-item-danger">Выйти</a>
           {% else %}
-          <a href="/login" class="list-group-item list-group-item-action text-primary"><i class="fas fa-right-to-bracket me-2"></i>Войти</a>
+          <a href="/login" class="list-group-item list-group-item-action list-group-item-primary">Войти</a>
           {% endif %}
         </div>
       </div>

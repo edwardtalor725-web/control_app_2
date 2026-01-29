@@ -1,14 +1,14 @@
-{% extends "base.html" %}
+﻿{% extends "base.html" %}
 {% block title %}Вход{% endblock %}
 
 {% block content %}
 <div class="mobile-container" style="max-width: 420px; margin: 0 auto;">
     <div class="text-center mb-4">
-        <div class="action-icon action-add" style="width:72px;height:72px;background:linear-gradient(135deg,#4361ee,#3a0ca3);box-shadow:0 8px 30px rgba(58,12,163,0.2);">
-            <i class="fas fa-wallet fa-2x"></i>
+        <div class="action-icon action-add">
+            <i class="fas fa-lock fa-2x"></i>
         </div>
         <h1 class="mobile-h1">Финансовый контроль</h1>
-        <p class="text-muted">Войдите в ваш аккаунт</p>
+        <p class="text-muted">Вход в систему</p>
     </div>
 
     <div class="mobile-card">
@@ -39,7 +39,7 @@
             </div>
 
             <button type="submit" class="mobile-btn mobile-btn-primary">
-                <i class="fas fa-right-to-bracket me-2"></i>Войти
+                <i class="fas fa-sign-in-alt me-2"></i>Войти в систему
             </button>
 
             <div class="text-center mt-3">
