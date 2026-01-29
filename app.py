@@ -313,7 +313,10 @@ def add_comment():
 @app.route('/api/operations_by_category')
 @login_required
 def operations_by_category():
-    data = []
+    # Return structured data with parallel arrays to match frontend code
+    categories = []
+    amounts = []
+    list_data = []
     for cat in CATEGORIES['expense']:
         total = db.session.query(db.func.sum(Operation.amount)).filter(
             Operation.category == cat,
@@ -321,8 +324,35 @@ def operations_by_category():
             Operation.status == 'completed'
         ).scalar() or 0
         if total > 0:
-            data.append({'category': cat, 'amount': total})
-    return jsonify(data)
+            categories.append(cat)
+            amounts.append(total)
+            list_data.append({'category': cat, 'amount': total})
+
+    # Primary payload expected by frontend
+    payload = {
+        'categories': categories,
+        'amounts': amounts
+    }
+    return jsonify(payload)
+
+
+@app.route('/api/expenses_by_category')
+@login_required
+def expenses_by_category():
+    """Alias endpoint kept for backward compatibility with older frontend paths."""
+    # Older clients expect a list of {category, amount}
+    categories = []
+    amounts = []
+    list_data = []
+    for cat in CATEGORIES['expense']:
+        total = db.session.query(db.func.sum(Operation.amount)).filter(
+            Operation.category == cat,
+            Operation.type == 'expense',
+            Operation.status == 'completed'
+        ).scalar() or 0
+        if total > 0:
+            list_data.append({'category': cat, 'amount': total})
+    return jsonify(list_data)
 
 @app.route('/api/cash_flow')
 @login_required

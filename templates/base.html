@@ -12,7 +12,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 
     <!-- Mobile Styles -->
-    <link rel="stylesheet" href="/static/css/app.css">
     <style>
         :root {
             --primary-color: #4361ee;
@@ -367,6 +366,9 @@
             }
         }
     </style>
+
+    <!-- Custom app stylesheet loaded after inline styles to ensure overrides (cache-busted) -->
+    <link rel="stylesheet" href="/static/css/app.css?v=2">
 
     {% block extra_css %}{% endblock %}
 </head>
