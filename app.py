@@ -7,20 +7,16 @@ import os
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 
-# Инициализация Flask
 app = Flask(__name__)
-# Use environment variables for configuration with sensible defaults for local dev
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-123')
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Инициализация базы данных
 db = SQLAlchemy(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
-# ---------- Модели базы данных ----------
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), unique=True, nullable=False)
@@ -32,13 +28,13 @@ class User(UserMixin, db.Model):
 class Counterparty(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
-    type = db.Column(db.String(20), nullable=False)  # client, supplier
+    type = db.Column(db.String(20), nullable=False)
     contact_info = db.Column(db.String(200))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 class Operation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    type = db.Column(db.String(10), nullable=False)  # income, expense
+    type = db.Column(db.String(10), nullable=False)
     amount = db.Column(db.Float, nullable=False)
     category = db.Column(db.String(50), nullable=False)
     description = db.Column(db.String(200))
@@ -48,7 +44,6 @@ class Operation(db.Model):
     status = db.Column(db.String(20), default='completed')
     user_id = db.Column(db.Integer, nullable=False)
     counterparty_id = db.Column(db.Integer)
-
 
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -65,7 +60,6 @@ class Notification(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     user_id = db.Column(db.Integer, nullable=False)
 
-# Конфигурация
 CATEGORIES = {
     'income': ['Продажи', 'Услуги', 'Инвестиции', 'Прочее'],
     'expense': ['Сырье', 'Аренда', 'Зарплата', 'Налоги', 'Коммунальные', 'Транспорт', 'Реклама', 'Прочее']
@@ -73,7 +67,7 @@ CATEGORIES = {
 
 ROLES = {
     'owner': 'Владелец',
-    'accountant': 'Бухгалтер', 
+    'accountant': 'Бухгалтер',
     'manager': 'Менеджер'
 }
 
@@ -81,20 +75,17 @@ ROLES = {
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-# ---------- Вспомогательные функции ----------
 def check_permission(required_role):
     roles_hierarchy = {'owner': 3, 'accountant': 2, 'manager': 1}
     user_role = current_user.role if current_user else 'manager'
     return roles_hierarchy.get(user_role, 0) >= roles_hierarchy.get(required_role, 0)
 
-# ---------- Маршруты аутентификации ----------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        
         if user and check_password_hash(user.password_hash, password):
             login_user(user)
             return redirect(url_for('dashboard'))
@@ -114,11 +105,9 @@ def register():
         email = request.form['email']
         password = request.form['password']
         role = request.form.get('role', 'manager')
-        
         if User.query.filter_by(username=username).first():
             flash('Пользователь уже существует')
             return redirect(url_for('register'))
-        
         user = User(
             username=username,
             email=email,
@@ -127,61 +116,47 @@ def register():
         )
         db.session.add(user)
         db.session.commit()
-        
         flash('Регистрация успешна!')
         return redirect(url_for('login'))
     return render_template('register.html')
 
-# ---------- Основные маршруты ----------
 @app.route('/')
 @login_required
 def dashboard():
     today = date.today()
     start_of_month = today.replace(day=1)
-    
-    # Доходы и расходы за месяц
     monthly_income = db.session.query(db.func.sum(Operation.amount)).filter(
-        Operation.type == 'income', 
+        Operation.type == 'income',
         Operation.date >= start_of_month,
         Operation.status == 'completed'
     ).scalar() or 0
-    
     monthly_expense = db.session.query(db.func.sum(Operation.amount)).filter(
         Operation.type == 'expense',
         Operation.date >= start_of_month,
         Operation.status == 'completed'
     ).scalar() or 0
-    
     profit = monthly_income - monthly_expense
-    
-    # Последние операции
     recent_operations = Operation.query.filter(
         Operation.status == 'completed'
     ).order_by(Operation.date.desc()).limit(10).all()
-    
-    
-    # Уведомления
     notifications = Notification.query.filter_by(
         user_id=current_user.id, is_read=False
     ).order_by(Notification.created_at.desc()).limit(5).all()
-    
     return render_template('dashboard.html',
                          income=monthly_income,
                          expense=monthly_expense,
                          profit=profit,
                          operations=recent_operations,
                          notifications=notifications,
-                         today=date.today())  # Добавил today
+                         today=date.today())
 
 @app.route('/operations', methods=['GET', 'POST'])
 @login_required
 def operations():
     if request.method == 'POST':
-        # Allow managers and above to add operations (previously required accountant)
         if not check_permission('manager'):
             flash('Недостаточно прав')
             return redirect(url_for('operations'))
-
         operation = Operation(
             type=request.form.get('type', 'expense'),
             amount=float(request.form.get('amount', 0)),
@@ -194,15 +169,11 @@ def operations():
             user_id=current_user.id,
             counterparty_id=(request.form.get('counterparty_id') if request.form.get('counterparty_id') else None)
         )
-
         db.session.add(operation)
         db.session.commit()
         flash('Операция добавлена')
         return redirect(url_for('operations'))
-
-    # Фильтрация операций
     operations_query = Operation.query
-
     if request.args.get('type'):
         operations_query = operations_query.filter_by(type=request.args.get('type'))
     if request.args.get('start_date'):
@@ -211,27 +182,22 @@ def operations():
     if request.args.get('end_date'):
         end_date = datetime.strptime(request.args.get('end_date'), '%Y-%m-%d').date()
         operations_query = operations_query.filter(Operation.date <= end_date)
-
     operations = operations_query.order_by(Operation.date.desc()).all()
     counterparties = Counterparty.query.all()
-
     return render_template('operations.html',
                            operations=operations,
                            counterparties=counterparties,
                            categories=CATEGORIES,
-                           today=date.today())  # Добавил today
-
+                           today=date.today())
 
 @app.route('/operations/edit/<int:op_id>', methods=['GET', 'POST'])
 @login_required
 def edit_operation(op_id):
     op = Operation.query.get_or_404(op_id)
-
     if request.method == 'POST':
         if not check_permission('accountant'):
             flash('Недостаточно прав')
             return redirect(url_for('operations'))
-
         op.type = request.form['type']
         op.amount = float(request.form['amount'])
         op.category = request.form['category']
@@ -240,7 +206,6 @@ def edit_operation(op_id):
         db.session.commit()
         flash('Операция обновлена')
         return redirect(url_for('operations'))
-
     return render_template('edit_operation.html', operation=op, categories=CATEGORIES)
 
 @app.route('/calendar')
@@ -250,7 +215,6 @@ def calendar():
         Operation.is_planned == True,
         Operation.status.in_(['planned', 'pending'])
     ).order_by(Operation.planned_date).all()
-    
     events = []
     for op in planned_operations:
         events.append({
@@ -259,7 +223,6 @@ def calendar():
             'start': op.planned_date.isoformat() if op.planned_date else op.date.isoformat(),
             'color': 'green' if op.type == 'income' else 'red'
         })
-    
     return render_template('calendar.html', events=json.dumps(events), today=date.today())
 
 @app.route('/reports')
@@ -268,24 +231,19 @@ def reports():
     today = date.today()
     start_date = request.args.get('start_date', today.replace(day=1).isoformat())
     end_date = request.args.get('end_date', today.isoformat())
-    
     start_date = datetime.strptime(start_date, '%Y-%m-%d').date()
     end_date = datetime.strptime(end_date, '%Y-%m-%d').date()
-    
     operations = Operation.query.filter(
         Operation.date.between(start_date, end_date),
         Operation.status == 'completed'
     ).all()
-    
     expense_by_category = {}
     income_by_category = {}
-    
     for op in operations:
         if op.type == 'expense':
             expense_by_category[op.category] = expense_by_category.get(op.category, 0) + op.amount
         else:
             income_by_category[op.category] = income_by_category.get(op.category, 0) + op.amount
-    
     return render_template('reports.html',
                          operations=operations,
                          expense_by_category=expense_by_category,
@@ -293,7 +251,6 @@ def reports():
                          start_date=start_date,
                          end_date=end_date,
                          today=date.today())
-
 
 @app.route('/reports/export')
 @login_required
@@ -307,14 +264,11 @@ def reports_export():
     except Exception:
         start_date = date.today().replace(day=1)
         end_date = date.today()
-
     operations = Operation.query.filter(
         Operation.date.between(start_date, end_date),
         Operation.status == 'completed'
     ).order_by(Operation.date).all()
-
     if fmt == 'csv' or fmt == 'excel':
-        # Generate CSV
         import io, csv
         output = io.StringIO()
         writer = csv.writer(output)
@@ -326,9 +280,7 @@ def reports_export():
             'Content-Type': 'text/csv; charset=utf-8',
             'Content-Disposition': f'attachment; filename="report_{start_date}_{end_date}.csv"'
         })
-
     if fmt == 'pdf':
-        # Try to render PDF using pdfkit if available, otherwise return HTML for printing
         rendered = render_template('report_export.html', operations=operations, start_date=start_date, end_date=end_date)
         try:
             import pdfkit
@@ -338,13 +290,10 @@ def reports_export():
                 'Content-Disposition': f'attachment; filename="report_{start_date}_{end_date}.pdf"'
             })
         except Exception:
-            # Fallback: return HTML with attachment so user can save/print
             return (rendered, 200, {
                 'Content-Type': 'text/html; charset=utf-8',
                 'Content-Disposition': f'attachment; filename="report_{start_date}_{end_date}.html"'
             })
-
-    # print or other formats - render printable HTML
     return render_template('report_export.html', operations=operations, start_date=start_date, end_date=end_date)
 
 @app.route('/users')
@@ -353,17 +302,13 @@ def users():
     if not check_permission('owner'):
         flash('Только владелец может управлять пользователями')
         return redirect(url_for('dashboard'))
-    
     users_list = User.query.all()
     return render_template('users.html', users=users_list, today=date.today())
 
-
 @app.route('/health')
 def health():
-    """Health-check endpoint for render/other platforms."""
     return jsonify({'status': 'ok', 'uptime': True}), 200
 
-# ---------- API маршруты ----------
 @app.route('/api/add_comment', methods=['POST'])
 @login_required
 def add_comment():
@@ -377,15 +322,12 @@ def add_comment():
     db.session.commit()
     return jsonify({'success': True})
 
-
 @app.route('/operations/delete/<int:op_id>', methods=['POST'])
 @login_required
 def delete_operation(op_id):
-    # Only accountants and owners can delete operations
     if not check_permission('accountant'):
         flash('Недостаточно прав для удаления')
         return redirect(url_for('operations'))
-
     op = Operation.query.get_or_404(op_id)
     db.session.delete(op)
     db.session.commit()
@@ -395,7 +337,6 @@ def delete_operation(op_id):
 @app.route('/api/operations_by_category')
 @login_required
 def operations_by_category():
-    # Return structured data with parallel arrays to match frontend code
     categories = []
     amounts = []
     list_data = []
@@ -409,20 +350,15 @@ def operations_by_category():
             categories.append(cat)
             amounts.append(total)
             list_data.append({'category': cat, 'amount': total})
-
-    # Primary payload expected by frontend
     payload = {
         'categories': categories,
         'amounts': amounts
     }
     return jsonify(payload)
 
-
 @app.route('/api/expenses_by_category')
 @login_required
 def expenses_by_category():
-    """Alias endpoint kept for backward compatibility with older frontend paths."""
-    # Older clients expect a list of {category, amount}
     categories = []
     amounts = []
     list_data = []
@@ -441,45 +377,35 @@ def expenses_by_category():
 def cash_flow():
     end_date = date.today()
     start_date = end_date - timedelta(days=30)
-    
     dates = []
     income_data = []
     expense_data = []
-    
     current_date = start_date
     while current_date <= end_date:
         dates.append(current_date.isoformat())
-        
         daily_income = db.session.query(db.func.sum(Operation.amount)).filter(
             Operation.type == 'income',
             Operation.date == current_date,
             Operation.status == 'completed'
         ).scalar() or 0
-        
         daily_expense = db.session.query(db.func.sum(Operation.amount)).filter(
             Operation.type == 'expense',
             Operation.date == current_date,
             Operation.status == 'completed'
         ).scalar() or 0
-        
         income_data.append(daily_income)
         expense_data.append(daily_expense)
-        
         current_date += timedelta(days=1)
-    
     return jsonify({
         'dates': dates,
         'income': income_data,
         'expense': expense_data
     })
 
-# ---------- Инициализация базы данных ----------
 def init_database():
     with app.app_context():
         db.create_all()
-        
         if not User.query.first():
-            # Создаем владельца
             owner = User(
                 username='admin',
                 email='admin@example.com',
@@ -487,8 +413,6 @@ def init_database():
                 role='owner'
             )
             db.session.add(owner)
-            
-            # Создаем бухгалтера
             accountant = User(
                 username='accountant',
                 email='accountant@example.com',
@@ -496,8 +420,6 @@ def init_database():
                 role='accountant'
             )
             db.session.add(accountant)
-            
-            # Создаем менеджера
             manager = User(
                 username='manager',
                 email='manager@example.com',
@@ -505,8 +427,6 @@ def init_database():
                 role='manager'
             )
             db.session.add(manager)
-            
-            # Создаем тестовых контрагентов
             counterparties = [
                 Counterparty(name='ООО "Поставщик"', type='supplier', contact_info='+7 999 123-45-67'),
                 Counterparty(name='ИП Иванов', type='client', contact_info='ivanov@mail.ru'),
@@ -514,21 +434,16 @@ def init_database():
             ]
             for cp in counterparties:
                 db.session.add(cp)
-            
             db.session.commit()
             print("База данных инициализирована с тестовыми данными")
 
 def ensure_database_initialized():
-    """Initialize sqlite DB automatically if the file doesn't exist.
-    For production databases (Postgres, etc.) do not attempt automatic seeding.
-    """
     uri = app.config.get('SQLALCHEMY_DATABASE_URI', '')
     if uri.startswith('sqlite:///'):
         db_path = uri.replace('sqlite:///', '', 1)
         if not os.path.exists(db_path):
             init_database()
 
-# Ensure DB exists for local sqlite deployments (safe no-op for other DBs)
 ensure_database_initialized()
 
 if __name__ == '__main__':

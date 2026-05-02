@@ -1,6 +1,3 @@
-// Основной JavaScript файл
-
-// Автоматическое скрытие alert сообщений через 5 секунд
 document.addEventListener('DOMContentLoaded', function() {
     const alerts = document.querySelectorAll('.alert');
     alerts.forEach(alert => {
@@ -11,7 +8,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 5000);
     });
     
-    // Обновление данных каждые 30 секунд (только на dashboard)
     if (window.location.pathname === '/') {
         setInterval(() => {
             fetch('/api/cash_flow')
@@ -23,7 +19,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Функция для показа уведомления
 function showNotification(message, type = 'info') {
     const notification = document.createElement('div');
     notification.className = `alert alert-${type} alert-dismissible fade show`;
@@ -40,7 +35,6 @@ function showNotification(message, type = 'info') {
     }, 5000);
 }
 
-// Проверка низкого баланса
 function checkLowBalance() {
     fetch('/api/check_balance')
         .then(response => response.json())
@@ -51,7 +45,6 @@ function checkLowBalance() {
         });
 }
 
-// Инициализация при загрузке страницы
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', initApp);
 } else {
@@ -59,7 +52,6 @@ if (document.readyState === 'loading') {
 }
 
 function initApp() {
-    // Проверяем баланс каждые 60 секунд
     if (currentUser && currentUser.role !== 'manager') {
         setInterval(checkLowBalance, 60000);
     }

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
-{% block title %}Экспорт отчета{% endblock %}
+{% block title %}Р­РєСЃРїРѕСЂС‚ РѕС‚С‡РµС‚Р°{% endblock %}
 
 {% block content %}
 <div class="container mt-4">
-    <h3>Отчет за период {{ start_date }} - {{ end_date }}</h3>
+    <h3>РћС‚С‡РµС‚ Р·Р° РїРµСЂРёРѕРґ {{ start_date }} - {{ end_date }}</h3>
     <table class="table table-sm table-striped mt-3">
         <thead>
-            <tr><th>Дата</th><th>Тип</th><th>Сумма</th><th>Категория</th><th>Описание</th></tr>
+            <tr><th>Р”Р°С‚Р°</th><th>РўРёРї</th><th>РЎСѓРјРјР°</th><th>РљР°С‚РµРіРѕСЂРёСЏ</th><th>РћРїРёСЃР°РЅРёРµ</th></tr>
         </thead>
         <tbody>
             {% for op in operations %}

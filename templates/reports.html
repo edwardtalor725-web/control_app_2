@@ -3,19 +3,18 @@
 
 {% block content %}
 <div class="mobile-container">
-    <!-- Период отчета -->
-    <div class="mobile-card">
+    <div class="mobile-card report-card">
         <h5 class="mobile-h4 mb-3">
-            <i class="fas fa-calendar-alt me-2"></i>Период отчета
+            <i class="fas fa-calendar-alt me-2 text-primary"></i>Период отчета
         </h5>
         <form method="get" class="row g-2">
             <div class="col-6">
-                <label class="form-label small">С даты</label>
+                <label class="form-label small text-muted">С даты</label>
                 <input type="date" name="start_date" class="mobile-input"
                        value="{{ start_date }}">
             </div>
             <div class="col-6">
-                <label class="form-label small">По дату</label>
+                <label class="form-label small text-muted">По дату</label>
                 <input type="date" name="end_date" class="mobile-input"
                        value="{{ end_date }}">
             </div>
@@ -27,43 +26,42 @@
         </form>
     </div>
 
-    <!-- Основные показатели -->
-    <div class="mobile-card">
+    <div class="mobile-card report-card">
         <h5 class="mobile-h4 mb-3">
-            <i class="fas fa-chart-line me-2"></i>Основные показатели
+            <i class="fas fa-chart-line me-2 text-primary"></i>Основные показатели
         </h5>
 
         {% set total_income = income_by_category.values()|sum %}
         {% set total_expense = expense_by_category.values()|sum %}
         {% set profit = total_income - total_expense %}
 
-        <div class="row text-center">
+        <div class="row text-center g-2">
             <div class="col-4">
-                <div class="p-2">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #28a745;">
+                <div class="metric-box income-box">
+                    <div class="metric-value income-text">
                         {{ "%.0f"|format(total_income) }} ₽
                     </div>
-                    <div style="font-size: 0.8rem; color: #666;">
+                    <div class="metric-label">
                         <i class="fas fa-arrow-up me-1"></i>Доходы
                     </div>
                 </div>
             </div>
             <div class="col-4">
-                <div class="p-2">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: #dc3545;">
+                <div class="metric-box expense-box">
+                    <div class="metric-value expense-text">
                         {{ "%.0f"|format(total_expense) }} ₽
                     </div>
-                    <div style="font-size: 0.8rem; color: #666;">
+                    <div class="metric-label">
                         <i class="fas fa-arrow-down me-1"></i>Расходы
                     </div>
                 </div>
             </div>
             <div class="col-4">
-                <div class="p-2">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: {{ '#28a745' if profit >= 0 else '#dc3545' }};">
+                <div class="metric-box profit-box">
+                    <div class="metric-value" style="color: {{ '#28a745' if profit >= 0 else '#dc3545' }};">
                         {{ "%.0f"|format(profit) }} ₽
                     </div>
-                    <div style="font-size: 0.8rem; color: #666;">
+                    <div class="metric-label">
                         <i class="fas fa-chart-line me-1"></i>Прибыль
                     </div>
                 </div>
@@ -71,34 +69,32 @@
         </div>
     </div>
 
-    <!-- Структура расходов -->
     {% if expense_by_category %}
-    <div class="mobile-card">
+    <div class="mobile-card report-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mobile-h4 mb-0">
-                <i class="fas fa-chart-pie me-2"></i>Структура расходов
+                <i class="fas fa-chart-pie me-2 text-danger"></i>Структура расходов
             </h5>
-            <span class="badge bg-primary">{{ expense_by_category|length }} категорий</span>
+            <span class="badge bg-danger rounded-pill">{{ expense_by_category|length }} категорий</span>
         </div>
 
-        <div class="mb-3">
+        <div class="chart-wrapper mb-3">
             <canvas id="expenseChart" height="250"></canvas>
         </div>
 
-        <!-- Детализация по категориям -->
-        <div class="mt-3">
+        <div class="category-list mt-3">
             {% for category, amount in expense_by_category.items() %}
-            <div class="d-flex justify-content-between align-items-center py-2 border-bottom">
+            <div class="category-item">
                 <div class="d-flex align-items-center">
-                    <div style="width: 12px; height: 12px; background: {{
+                    <div class="category-dot" style="background: {{
                         ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40']
                         [loop.index0 % 6]
-                    }}; border-radius: 2px; margin-right: 10px;"></div>
-                    <span>{{ category }}</span>
+                    }};"></div>
+                    <span class="category-name">{{ category }}</span>
                 </div>
-                <div>
+                <div class="category-amount">
                     <strong>{{ "%.0f"|format(amount) }} ₽</strong>
-                    <div style="font-size: 0.8rem; color: #666; text-align: right;">
+                    <div class="category-percent">
                         {{ "%.1f"|format(amount/total_expense*100 if total_expense > 0 else 0) }}%
                     </div>
                 </div>
@@ -108,25 +104,23 @@
     </div>
     {% endif %}
 
-    <!-- Структура доходов -->
     {% if income_by_category %}
-    <div class="mobile-card">
+    <div class="mobile-card report-card">
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h5 class="mobile-h4 mb-0">
-                <i class="fas fa-chart-bar me-2"></i>Структура доходов
+                <i class="fas fa-chart-bar me-2 text-success"></i>Структура доходов
             </h5>
-            <span class="badge bg-success">{{ income_by_category|length }} категорий</span>
+            <span class="badge bg-success rounded-pill">{{ income_by_category|length }} категорий</span>
         </div>
 
-        <!-- Детализация по категориям -->
-        <div class="mt-2">
+        <div class="income-list">
             {% for category, amount in income_by_category.items() %}
-            <div class="mb-3">
+            <div class="income-item">
                 <div class="d-flex justify-content-between mb-1">
-                    <span>{{ category }}</span>
-                    <span>{{ "%.0f"|format(amount) }} ₽ ({{ "%.1f"|format(amount/total_income*100 if total_income > 0 else 0) }}%)</span>
+                    <span class="income-name">{{ category }}</span>
+                    <span class="income-value">{{ "%.0f"|format(amount) }} ₽ ({{ "%.1f"|format(amount/total_income*100 if total_income > 0 else 0) }}%)</span>
                 </div>
-                <div class="progress" style="height: 8px;">
+                <div class="progress income-progress">
                     <div class="progress-bar bg-success"
                          style="width: {{ amount/total_income*100 if total_income > 0 else 0 }}%">
                     </div>
@@ -137,30 +131,42 @@
     </div>
     {% endif %}
 
-    <!-- Экспорт отчета -->
-    <div class="mobile-card">
-        <h6 class="mobile-h4 mb-3">Экспорт отчета</h6>
+    <div class="mobile-card report-card">
+        <h6 class="mobile-h4 mb-3">
+            <i class="fas fa-download me-2 text-primary"></i>Экспорт отчета
+        </h6>
         <div class="row g-2">
             <div class="col-6">
-                <a class="mobile-btn d-block text-center" style="background: #f8f9fa;" href="/reports/export?format=pdf&start_date={{ start_date }}&end_date={{ end_date }}">
-                    <i class="fas fa-file-pdf me-2"></i>PDF
+                <a class="export-btn pdf-btn" href="/reports/export?format=pdf&start_date={{ start_date }}&end_date={{ end_date }}">
+                    <i class="fas fa-file-pdf"></i>PDF
                 </a>
             </div>
             <div class="col-6">
-                <a class="mobile-btn d-block text-center" style="background: #f8f9fa;" href="/reports/export?format=excel&start_date={{ start_date }}&end_date={{ end_date }}">
-                    <i class="fas fa-file-excel me-2"></i>Excel
+                <a class="export-btn excel-btn" href="/reports/export?format=excel&start_date={{ start_date }}&end_date={{ end_date }}">
+                    <i class="fas fa-file-excel"></i>Excel
                 </a>
             </div>
             <div class="col-6">
-                <button class="mobile-btn" style="background: #f8f9fa;" onclick="window.print()">
-                    <i class="fas fa-print me-2"></i>Печать
+                <button class="export-btn print-btn" onclick="window.print()">
+                    <i class="fas fa-print"></i>Печать
                 </button>
             </div>
             <div class="col-6">
-                <button class="mobile-btn" style="background: #f8f9fa;" onclick="navigator.share && navigator.share({title: 'Отчет', text: 'Смотрите отчет', url: window.location.href})">
-                    <i class="fas fa-share-alt me-2"></i>Поделиться
+                <button class="export-btn share-btn" onclick="shareReport()">
+                    <i class="fas fa-share-alt"></i>Поделиться
                 </button>
             </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="shareToast" class="toast align-items-center text-white bg-success" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                <i class="fas fa-check-circle me-2"></i>Ссылка скопирована в буфер обмена!
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
         </div>
     </div>
 </div>
@@ -168,7 +174,27 @@
 
 {% block extra_js %}
 <script>
-// График расходов
+function shareReport() {
+    const shareData = {
+        title: 'Финансовый отчет',
+        text: 'Отчет за период {{ start_date }} - {{ end_date }}',
+        url: window.location.href
+    };
+    
+    if (navigator.share) {
+        navigator.share(shareData).catch(function(err) {
+            console.log('Share cancelled');
+        });
+    } else {
+        navigator.clipboard.writeText(window.location.href).then(function() {
+            const toast = new bootstrap.Toast(document.getElementById('shareToast'));
+            toast.show();
+        }).catch(function() {
+            alert('Не удалось скопировать ссылку. URL: ' + window.location.href);
+        });
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     const expenseData = {{ expense_by_category|tojson }};
     const labels = Object.keys(expenseData);
@@ -177,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function() {
     if (labels.length > 0) {
         const ctx = document.getElementById('expenseChart').getContext('2d');
         new Chart(ctx, {
-            type: 'pie',
+            type: 'doughnut',
             data: {
                 labels: labels,
                 datasets: [{
@@ -186,21 +212,33 @@ document.addEventListener('DOMContentLoaded', function() {
                         '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
                         '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
                     ],
-                    borderWidth: 1
+                    borderWidth: 2,
+                    borderColor: '#fff'
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                cutout: '60%',
                 plugins: {
                     legend: {
                         position: 'bottom',
                         labels: {
                             boxWidth: 12,
-                            font: {
-                                size: 10
-                            },
-                            padding: 15
+                            font: { size: 11 },
+                            padding: 15,
+                            usePointStyle: true
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.parsed || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = total > 0 ? ((value / total) * 100).toFixed(1) : 0;
+                                return label + ': ' + value.toFixed(0) + ' ₽ (' + percentage + '%)';
+                            }
                         }
                     }
                 }
@@ -208,14 +246,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 });
-
-// Автообновление отчета
-let autoRefresh = false;
-
-if (autoRefresh) {
-    setInterval(() => {
-        window.location.reload();
-    }, 60000); // Каждую минуту
-}
 </script>
 {% endblock %}

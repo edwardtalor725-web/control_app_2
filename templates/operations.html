@@ -3,43 +3,38 @@
 
 {% block content %}
 <div class="mobile-container">
-    <!-- Быстрое добавление -->
-    <div class="mobile-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mobile-h4 mb-0">Операции</h5>
-            <div class="dropdown">
-                <button class="btn btn-sm btn-outline-primary" type="button"
-                        data-bs-toggle="modal" data-bs-target="#addModal">
-                    <i class="fas fa-plus me-1"></i>Добавить
-                </button>
-            </div>
-        </div>
-
-        <!-- Быстрые фильтры -->
-        <div class="mobile-filter">
-            <form method="get" class="row g-2">
-                <div class="col-6">
-                    <select name="type" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">Все типы</option>
-                        <option value="income" {% if request.args.get('type') == 'income' %}selected{% endif %}>Доходы</option>
-                        <option value="expense" {% if request.args.get('type') == 'expense' %}selected{% endif %}>Расходы</option>
-                    </select>
-                </div>
-                <div class="col-6">
-                    <select name="category" class="form-select form-select-sm" onchange="this.form.submit()">
-                        <option value="">Все категории</option>
-                        {% for cat_list in categories.values() %}
-                        {% for cat in cat_list %}
-                        <option value="{{ cat }}" {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
-                        {% endfor %}
-                        {% endfor %}
-                    </select>
-                </div>
-            </form>
-        </div>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mobile-h2 mb-0">
+            <i class="fas fa-exchange-alt me-2" style="color:var(--primary);"></i>Операции
+        </h1>
+        <button class="btn btn-primary rounded-pill px-4" type="button"
+                data-bs-toggle="modal" data-bs-target="#addModal">
+            <i class="fas fa-plus me-2"></i>Добавить
+        </button>
     </div>
 
-    <!-- Список операций -->
+    <div class="mobile-filter mb-4">
+        <form method="get" class="row g-2">
+            <div class="col-6">
+                <select name="type" class="form-select" onchange="this.form.submit()">
+                    <option value="">Все типы</option>
+                    <option value="income" {% if request.args.get('type') == 'income' %}selected{% endif %}>Доходы</option>
+                    <option value="expense" {% if request.args.get('type') == 'expense' %}selected{% endif %}>Расходы</option>
+                </select>
+            </div>
+            <div class="col-6">
+                <select name="category" class="form-select" onchange="this.form.submit()">
+                    <option value="">Все категории</option>
+                    {% for type, cat_list in categories.items() %}
+                    {% for cat in cat_list %}
+                    <option value="{{ cat }}" {% if request.args.get('category') == cat %}selected{% endif %}>{{ cat }}</option>
+                    {% endfor %}
+                    {% endfor %}
+                </select>
+            </div>
+        </form>
+    </div>
+
     <div class="mobile-card">
         <div class="table-responsive-mobile">
             <table class="mobile-table">
@@ -47,19 +42,15 @@
                     <tr>
                         <th>Дата</th>
                         <th>Тип</th>
-                        <th>Сумма</th>
+                        <th class="text-end">Сумма</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for op in operations %}
-                    <tr style="cursor: pointer;">
+                    <tr style="cursor:pointer;">
                         <td>
-                            <div style="font-size: 0.9rem;">
-                                {{ op.op_date if op.op_date else op.date }}
-                            </div>
-                            <div style="font-size: 0.8rem; color: #666;">
-                                {{ op.category[:10] }}{% if op.category|length > 10 %}...{% endif %}
-                            </div>
+                            <div style="font-weight:500;">{{ op.date.strftime('%d.%m.%Y') if op.date else '-' }}</div>
+                            <div style="font-size:0.8rem;color:var(--gray);">{{ op.category[:12] }}{% if op.category|length > 12 %}...{% endif %}</div>
                         </td>
                         <td>
                             <span class="status-badge {{ 'status-income' if op.type == 'income' else 'status-expense' }}">
@@ -67,18 +58,20 @@
                             </span>
                         </td>
                         <td class="text-end">
-                            <div style="font-weight: 600; {{ 'color: #28a745;' if op.type == 'income' else 'color: #dc3545;' }}">
+                            <div style="font-weight:700;color:{{ 'var(--success)' if op.type == 'income' else 'var(--danger)' }};">
                                 {{ "%.0f"|format(op.amount) }} ₽
                             </div>
                             {% if op.description %}
-                            <div style="font-size: 0.8rem; color: #666; margin-top: 2px;">
-                                {{ op.description[:15] }}{% if op.description|length > 15 %}...{% endif %}
-                            </div>
+                            <div style="font-size:0.75rem;color:var(--gray);margin-top:2px;">{{ op.description[:12] }}{% if op.description|length > 12 %}...{% endif %}</div>
                             {% endif %}
                             <div class="mt-2 d-flex gap-2 justify-content-end">
-                                <a href="/operations/edit/{{ op.id }}" class="btn btn-sm btn-outline-primary">Изменить</a>
+                                <a href="/operations/edit/{{ op.id }}" class="btn btn-sm btn-outline-primary rounded-pill" style="font-size:0.75rem;padding:4px 12px;">
+                                    <i class="fas fa-pen"></i>
+                                </a>
                                 <form method="post" action="/operations/delete/{{ op.id }}" onsubmit="return confirm('Удалить операцию?');" style="display:inline;">
-                                    <button type="submit" class="btn btn-sm btn-outline-danger">Удалить</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger rounded-pill" style="font-size:0.75rem;padding:4px 12px;">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
                                 </form>
                             </div>
                         </td>
@@ -90,8 +83,8 @@
 
         {% if operations|length == 0 %}
         <div class="text-center py-5">
-            <div class="action-icon" style="width: 60px; height: 60px; margin: 0 auto 20px; background: #e9ecef;">
-                <i class="fas fa-receipt fa-2x text-muted"></i>
+            <div style="width:64px;height:64px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <i class="fas fa-receipt fa-2x" style="color:var(--gray-light);"></i>
             </div>
             <h6 class="mobile-h4 mb-2">Нет операций</h6>
             <p class="text-muted mb-4">Добавьте первую операцию</p>
@@ -102,33 +95,34 @@
         {% endif %}
     </div>
 
-    <!-- Статистика -->
     {% if operations|length > 0 %}
-    <div class="mobile-card">
-        <h6 class="mobile-h4 mb-3">Статистика</h6>
-        <div class="row text-center">
+    <div class="mobile-card mt-4">
+        <h6 class="mobile-h4 mb-3">
+            <i class="fas fa-chart-bar me-2" style="color:var(--primary);"></i>Статистика
+        </h6>
+        <div class="row text-center g-3">
             <div class="col-4">
-                <div class="p-2">
-                    <div style="font-size: 1.2rem; font-weight: 600; color: #28a745;">
+                <div class="metric-box">
+                    <div class="metric-value" style="color:var(--success);">
                         {{ "%.0f"|format(operations|selectattr('type', 'equalto', 'income')|map(attribute='amount')|sum) }} ₽
                     </div>
-                    <div style="font-size: 0.8rem; color: #666;">Доходы</div>
+                    <div class="metric-label">Доходы</div>
                 </div>
             </div>
             <div class="col-4">
-                <div class="p-2">
-                    <div style="font-size: 1.2rem; font-weight: 600; color: #dc3545;">
+                <div class="metric-box">
+                    <div class="metric-value" style="color:var(--danger);">
                         {{ "%.0f"|format(operations|selectattr('type', 'equalto', 'expense')|map(attribute='amount')|sum) }} ₽
                     </div>
-                    <div style="font-size: 0.8rem; color: #666;">Расходы</div>
+                    <div class="metric-label">Расходы</div>
                 </div>
             </div>
             <div class="col-4">
-                <div class="p-2">
-                    <div style="font-size: 1.2rem; font-weight: 600; color: #17a2b8;">
+                <div class="metric-box">
+                    <div class="metric-value" style="color:var(--info);">
                         {{ "%.0f"|format((operations|selectattr('type', 'equalto', 'income')|map(attribute='amount')|sum) - (operations|selectattr('type', 'equalto', 'expense')|map(attribute='amount')|sum)) }} ₽
                     </div>
-                    <div style="font-size: 0.8rem; color: #666;">Прибыль</div>
+                    <div class="metric-label">Прибыль</div>
                 </div>
             </div>
         </div>
@@ -136,28 +130,26 @@
     {% endif %}
 </div>
 
-<!-- Модальное окно добавления операции -->
 <div class="modal fade" id="addModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title mobile-h4">
-                    <i class="fas fa-plus-circle me-2"></i>Новая операция
+                    <i class="fas fa-plus-circle me-2" style="color:var(--primary);"></i>Новая операция
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="/operations">
                 <div class="modal-body">
-                    <!-- Быстрый выбор типа -->
                     <div class="row g-2 mb-3">
                         <div class="col-6">
-                            <button type="button" class="btn btn-outline-success w-100"
+                            <button type="button" class="btn btn-outline-success w-100 rounded-pill"
                                     onclick="setType('income')">
                                 <i class="fas fa-arrow-up me-1"></i>Доход
                             </button>
                         </div>
                         <div class="col-6">
-                            <button type="button" class="btn btn-outline-danger w-100"
+                            <button type="button" class="btn btn-outline-danger w-100 rounded-pill"
                                     onclick="setType('expense')">
                                 <i class="fas fa-arrow-down me-1"></i>Расход
                             </button>
@@ -198,9 +190,9 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save me-1"></i>Сохранить
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-save me-2"></i>Сохранить
                     </button>
                 </div>
             </form>
@@ -211,52 +203,29 @@
 
 {% block extra_js %}
 <script>
-    function setType(type) {
-        document.getElementById('operationType').value = type;
-
-        // Обновляем стили кнопок: вернуть всем outline, затем выставить выбранной
-        const incomeBtn = document.querySelector('[onclick="setType(\'income\')"]');
-        const expenseBtn = document.querySelector('[onclick="setType(\'expense\')"]');
-
-        if (incomeBtn && expenseBtn) {
-            incomeBtn.classList.remove('btn-success');
-            incomeBtn.classList.add('btn-outline-success');
-            expenseBtn.classList.remove('btn-danger');
-            expenseBtn.classList.add('btn-outline-danger');
-
-            if (type === 'income') {
-                incomeBtn.classList.remove('btn-outline-success');
-                incomeBtn.classList.add('btn-success');
-            } else {
-                expenseBtn.classList.remove('btn-outline-danger');
-                expenseBtn.classList.add('btn-danger');
-            }
+function setType(type) {
+    document.getElementById('operationType').value = type;
+    const incomeBtn = document.querySelector('[onclick="setType(\'income\')"]');
+    const expenseBtn = document.querySelector('[onclick="setType(\'expense\')"]');
+    if (incomeBtn && expenseBtn) {
+        incomeBtn.classList.remove('btn-success');
+        incomeBtn.classList.add('btn-outline-success');
+        expenseBtn.classList.remove('btn-danger');
+        expenseBtn.classList.add('btn-outline-danger');
+        if (type === 'income') {
+            incomeBtn.classList.remove('btn-outline-success');
+            incomeBtn.classList.add('btn-success');
+        } else {
+            expenseBtn.classList.remove('btn-outline-danger');
+            expenseBtn.classList.add('btn-danger');
         }
     }
-
-    function showOperationDetails(id) {
-        // В реальном приложении здесь будет переход к деталям
-        alert('Детали операции ID: ' + id + '\nВ демо-версии не реализовано');
+}
+document.addEventListener('DOMContentLoaded', function () {
+    const dateInput = document.querySelector('input[name="date"]');
+    if (dateInput && !dateInput.value) {
+        dateInput.value = new Date().toISOString().split('T')[0];
     }
-
-    // Инициализация
-    document.addEventListener('DOMContentLoaded', function () {
-        // Настройка даты по умолчанию
-        const dateInput = document.querySelector('input[name="date"]');
-        if (dateInput && !dateInput.value) {
-            const today = new Date();
-            dateInput.value = today.toISOString().split('T')[0];
-        }
-
-        // Показ/скрытие дополнительных полей
-        const categorySelect = document.querySelector('select[name="category"]');
-        if (categorySelect) {
-            categorySelect.addEventListener('change', function () {
-                if (this.value === 'Другое') {
-                    // Можно показать поле для ввода своей категории
-                }
-            });
-        }
-    });
+});
 </script>
 {% endblock %}

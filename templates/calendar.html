@@ -2,33 +2,32 @@
 {% block title %}Календарь платежей{% endblock %}
 
 {% block content %}
-<div class="card">
-    <div class="card-header">
-        <h5>Платежный календарь</h5>
-    </div>
-    <div class="card-body">
+<div class="mobile-container">
+    <h1 class="mobile-h2 mb-4">
+        <i class="fas fa-calendar-alt me-2" style="color:var(--primary);"></i>Платежный календарь
+    </h1>
+
+    <div class="mobile-card">
         <div id="calendar"></div>
     </div>
-</div>
 
-<div class="card mt-4">
-    <div class="card-header">
-        <h5>Предстоящие операции</h5>
-    </div>
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
+    <div class="mobile-card mt-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mobile-h4 mb-0">
+                <i class="fas fa-clock me-2" style="color:var(--primary);"></i>Предстоящие операции
+            </h5>
+        </div>
+        <div class="table-responsive-mobile">
+            <table class="mobile-table">
                 <thead>
                     <tr>
                         <th>Дата</th>
                         <th>Тип</th>
                         <th>Сумма</th>
                         <th>Категория</th>
-                        <th>Описание</th>
                     </tr>
                 </thead>
                 <tbody id="plannedOperations">
-                    <!-- Данные загружаются через JavaScript -->
                 </tbody>
             </table>
         </div>
@@ -38,6 +37,13 @@
 
 {% block extra_css %}
 <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css" rel="stylesheet">
+<style>
+.fc-toolbar-title{font-size:1.1rem!important;font-weight:600!important;}
+.fc-button{padding:6px 12px!important;border-radius:var(--radius)!important;font-size:0.85rem!important;}
+.fc-event{border-radius:var(--radius)!important;font-size:0.8rem!important;padding:2px 6px!important;}
+.fc-daygrid-day-number{font-size:0.85rem!important;}
+.fc-col-header-cell{font-size:0.8rem!important;font-weight:600!important;}
+</style>
 {% endblock %}
 
 {% block extra_js %}
@@ -45,21 +51,27 @@
 <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/locales/ru.js"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Используем события, переданные сервером
     const eventsData = {{ events|safe }} || [];
-
-    // Инициализация календаря
     const calendarEl = document.getElementById('calendar');
     const calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
         locale: 'ru',
         events: eventsData,
-        eventColor: '#3788d8',
-        eventTextColor: '#ffffff'
+        eventColor: '#4f46e5',
+        eventTextColor: '#ffffff',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,listWeek'
+        },
+        buttonText: {
+            today: 'Сегодня',
+            month: 'Месяц',
+            list: 'Список'
+        }
     });
     calendar.render();
 
-    // Отображаем в таблице предстоящие операции
     const tbody = document.getElementById('plannedOperations');
     eventsData.forEach(event => {
         const row = document.createElement('tr');
@@ -69,15 +81,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const category = descPart.split('-')[0] || '';
         const amountMatch = (event.title || '').match(/\d+[.,]?\d*/g);
         const amount = amountMatch ? amountMatch.pop() : '0';
-        // Bootstrap badge color mapping
-        const colorClass = (event.color === 'green') ? 'bg-success' : ((event.color === 'red') ? 'bg-danger' : 'bg-secondary');
+        const isIncome = (event.color === 'green');
 
         row.innerHTML = `
-            <td>${date}</td>
-            <td><span class="badge ${colorClass}">${type}</span></td>
-            <td>${amount} руб.</td>
-            <td>${category}</td>
-            <td>${event.title || ''}</td>
+            <td style="font-weight:500;">${date}</td>
+            <td><span class="status-badge ${isIncome ? 'status-income' : 'status-expense'}">${type}</span></td>
+            <td style="font-weight:700;color:${isIncome ? 'var(--success)' : 'var(--danger)'};">${amount} ₽</td>
+            <td style="color:var(--gray);font-size:0.9rem;">${category}</td>
         `;
         tbody.appendChild(row);
     });

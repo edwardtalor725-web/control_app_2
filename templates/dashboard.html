@@ -3,85 +3,80 @@
 
 {% block content %}
 <div class="mobile-container">
-    <!-- Быстрые действия -->
-    <div class="d-flex justify-content-between mb-4">
-        <button class="mobile-btn mobile-btn-primary me-2" onclick="location.href='/operations'">
-            <i class="fas fa-plus me-2"></i>Добавить операцию
-        </button>
-        <button class="mobile-btn" onclick="location.href='/reports'" style="background:var(--light-color);color:var(--dark-color);">
-            <i class="fas fa-chart-bar me-2"></i>Отчеты
-        </button>
+    <div class="d-flex gap-3 mb-4">
+        <a href="/operations" class="mobile-btn mobile-btn-primary flex-fill">
+            <i class="fas fa-plus"></i>Добавить операцию
+        </a>
+        <a href="/reports" class="mobile-btn flex-fill" style="background:var(--card-bg);color:var(--text);border:2px solid var(--border);">
+            <i class="fas fa-chart-bar"></i>Отчеты
+        </a>
     </div>
 
-    <!-- Метрики в сетке -->
     <div class="metrics-grid">
-        <div class="metric-card income">
+        <div class="metric-card income animate-slide-up">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
-                        <i class="fas fa-arrow-up me-1"></i>Доходы
+                    <div class="metric-label mb-1">
+                        <i class="fas fa-arrow-up me-1 text-success"></i>Доходы
                     </div>
-                    <div class="mobile-h2 text-success">{{ "%.0f"|format(income) }} ₽</div>
+                    <div class="mobile-h2" style="color:var(--success);">{{ "%.0f"|format(income) }} ₽</div>
                 </div>
-                <div class="action-icon action-add" style="background: #28a745;">
+                <div class="action-icon" style="background:linear-gradient(135deg,var(--success),#059669);">
                     <i class="fas fa-money-bill-wave"></i>
                 </div>
             </div>
         </div>
 
-        <div class="metric-card expense">
+        <div class="metric-card expense animate-slide-up" style="animation-delay:0.1s;">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
-                        <i class="fas fa-arrow-down me-1"></i>Расходы
+                    <div class="metric-label mb-1">
+                        <i class="fas fa-arrow-down me-1 text-danger"></i>Расходы
                     </div>
-                    <div class="mobile-h2 text-danger">{{ "%.0f"|format(expense) }} ₽</div>
+                    <div class="mobile-h2" style="color:var(--danger);">{{ "%.0f"|format(expense) }} ₽</div>
                 </div>
-                <div class="action-icon" style="background: #dc3545;">
+                <div class="action-icon" style="background:linear-gradient(135deg,var(--danger),#dc2626);">
                     <i class="fas fa-shopping-cart"></i>
                 </div>
             </div>
         </div>
 
-        <div class="metric-card profit">
+        <div class="metric-card profit animate-slide-up" style="animation-delay:0.2s;">
             <div class="d-flex justify-content-between align-items-center">
                 <div>
-                    <div style="font-size: 0.9rem; color: #666; margin-bottom: 5px;">
-                        <i class="fas fa-chart-line me-1"></i>Прибыль
+                    <div class="metric-label mb-1">
+                        <i class="fas fa-chart-line me-1" style="color:var(--info);"></i>Прибыль
                     </div>
-                    <div class="mobile-h2 text-info">{{ "%.0f"|format(profit) }} ₽</div>
+                    <div class="mobile-h2" style="color:var(--info);">{{ "%.0f"|format(profit) }} ₽</div>
                 </div>
-                <div class="action-icon" style="background: #17a2b8;">
+                <div class="action-icon" style="background:linear-gradient(135deg,var(--info),#2563eb);">
                     <i class="fas fa-coins"></i>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- График расходов (мобильная версия) -->
-    <div class="mobile-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mobile-h4 mb-0">Расходы по категориям</h5>
-            <span class="badge bg-light text-dark">
-                <i class="fas fa-filter me-1"></i>Месяц
+    <div class="mobile-card animate-slide-up" style="animation-delay:0.3s;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mobile-h4 mb-0">
+                <i class="fas fa-chart-pie me-2" style="color:var(--primary);"></i>Расходы по категориям
+            </h5>
+            <span class="badge bg-light text-dark border">
+                <i class="fas fa-calendar me-1"></i>Месяц
             </span>
         </div>
 
-        <!-- Простая круговая диаграмма -->
-        <div class="text-center">
+        <div class="chart-wrapper">
             <canvas id="expenseChart" height="250"></canvas>
-        </div>
-
-        <div class="swipe-indicator">
-            <i class="fas fa-arrows-left-right me-1"></i>Свайпайте для деталей
         </div>
     </div>
 
-    <!-- Последние операции -->
-    <div class="mobile-card">
-        <div class="d-flex justify-content-between align-items-center mb-3">
-            <h5 class="mobile-h4 mb-0">Последние операции</h5>
-            <a href="/operations" class="btn btn-sm btn-outline-primary">
+    <div class="mobile-card animate-slide-up" style="animation-delay:0.4s;">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="mobile-h4 mb-0">
+                <i class="fas fa-list me-2" style="color:var(--primary);"></i>Последние операции
+            </h5>
+            <a href="/operations" class="btn btn-sm btn-outline-primary rounded-pill">
                 Все <i class="fas fa-arrow-right ms-1"></i>
             </a>
         </div>
@@ -90,25 +85,25 @@
             <table class="mobile-table">
                 <thead>
                     <tr>
-                        <th style="width: 30%;">Дата</th>
-                        <th style="width: 20%;">Тип</th>
-                        <th style="width: 30%;">Категория</th>
-                        <th style="width: 20%;" class="text-end">Сумма</th>
+                        <th>Дата</th>
+                        <th>Тип</th>
+                        <th>Категория</th>
+                        <th class="text-end">Сумма</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for op in operations[:5] %}
-                    <tr onclick="location.href='/operations'" style="cursor: pointer;">
-                        <td>{{ op.op_date if op.op_date else op.date }}</td>
+                    <tr onclick="location.href='/operations'" style="cursor:pointer;">
+                        <td>{{ op.date.strftime('%d.%m') if op.date else '-' }}</td>
                         <td>
                             <span class="status-badge {{ 'status-income' if op.type == 'income' else 'status-expense' }}">
-                                <i class="fas {{ 'fa-arrow-up me-1' if op.type == 'income' else 'fa-arrow-down me-1' }}"></i>
+                                <i class="fas {{ 'fa-arrow-up' if op.type == 'income' else 'fa-arrow-down' }}"></i>
                                 {{ 'Доход' if op.type == 'income' else 'Расход' }}
                             </span>
                         </td>
                         <td>{{ op.category[:15] }}{% if op.category|length > 15 %}...{% endif %}</td>
-                        <td class="text-end {{ 'text-success' if op.type == 'income' else 'text-danger' }}">
-                            <strong>{{ "%.0f"|format(op.amount) }} ₽</strong>
+                        <td class="text-end fw-bold" style="color:{{ 'var(--success)' if op.type == 'income' else 'var(--danger)' }};">
+                            {{ "%.0f"|format(op.amount) }} ₽
                         </td>
                     </tr>
                     {% endfor %}
@@ -117,162 +112,74 @@
         </div>
 
         {% if operations|length == 0 %}
-        <div class="text-center py-4">
-            <i class="fas fa-receipt fa-2x text-muted mb-3"></i>
-            <p class="text-muted">Нет операций</p>
+        <div class="text-center py-5">
+            <div class="mb-3" style="width:64px;height:64px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                <i class="fas fa-receipt fa-2x" style="color:var(--gray-light);"></i>
+            </div>
+            <p class="text-muted mb-0">Нет операций за этот период</p>
+            <a href="/operations" class="btn btn-sm btn-primary mt-3 rounded-pill">Добавить первую операцию</a>
         </div>
         {% endif %}
-    </div>
-
-    <!-- Быстрые действия панель -->
-    <div class="mobile-card">
-        <h5 class="mobile-h4 mb-3">Быстрые действия</h5>
-        <div class="row g-2">
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #e3f2fd; color: #1976d2;"
-                        onclick="location.href='/operations?type=income'">
-                    <i class="fas fa-plus-circle me-2"></i>Доход
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #ffebee; color: #d32f2f;"
-                        onclick="location.href='/operations?type=expense'">
-                    <i class="fas fa-minus-circle me-2"></i>Расход
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #f3e5f5; color: #7b1fa2;"
-                        onclick="location.href='/reports'">
-                    <i class="fas fa-file-invoice me-2"></i>Отчет
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #e8f5e8; color: #388e3c;"
-                        onclick="location.href='/calendar'">
-                    <i class="fas fa-calendar-alt me-2"></i>Календарь
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Быстрые действия панель -->
-    <div class="mobile-card">
-        <h5 class="mobile-h4 mb-3">Быстрые действия</h5>
-        <div class="row g-2">
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #e3f2fd; color: #1976d2;"
-                        onclick="location.href='/operations?type=income'">
-                    <i class="fas fa-plus-circle me-2"></i>Доход
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #ffebee; color: #d32f2f;"
-                        onclick="location.href='/operations?type=expense'">
-                    <i class="fas fa-minus-circle me-2"></i>Расход
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #f3e5f5; color: #7b1fa2;"
-                        onclick="location.href='/reports'">
-                    <i class="fas fa-file-invoice me-2"></i>Отчет
-                </button>
-            </div>
-            <div class="col-6">
-                <button class="mobile-btn" style="background: #e8f5e8; color: #388e3c;"
-                        onclick="location.href='/calendar'">
-                    <i class="fas fa-calendar-alt me-2"></i>Календарь
-                </button>
-            </div>
-        </div>
     </div>
 </div>
 {% endblock %}
 
 {% block extra_js %}
 <script>
-    // Простой график для мобильных
-    // Load expenses data and render chart. Support both new {categories,amounts}
-    // and older list-based payloads.
-    fetch('/api/operations_by_category')
-        .then(response => response.json())
-        .then(payload => {
-            let labels = [];
-            let values = [];
-
-            if (Array.isArray(payload)) {
-                // older list format
-                payload.forEach(item => {
-                    labels.push(item.category);
-                    values.push(item.amount);
-                });
-            } else if (payload.categories && payload.amounts) {
-                labels = payload.categories;
-                values = payload.amounts;
-            }
-
-            if (labels.length === 0) {
-                document.getElementById('expenseChart').parentElement.innerHTML = `
-                <div class="text-center py-4">
-                    <i class="fas fa-chart-pie fa-2x text-muted mb-3"></i>
-                    <p class="text-muted">Нет данных для графика</p>
-                </div>`;
-                return;
-            }
-
-            // Lazy-load Chart.js and render
-            function loadChart() {
-                if (window.Chart) return Promise.resolve();
-                return new Promise((resolve, reject) => {
-                    const s = document.createElement('script');
-                    s.src = 'https://cdn.jsdelivr.net/npm/chart.js';
-                    s.async = true;
-                    s.onload = resolve;
-                    s.onerror = reject;
-                    document.head.appendChild(s);
-                });
-            }
-
-            loadChart().then(() => {
-                const ctx = document.getElementById('expenseChart').getContext('2d');
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: labels,
-                        datasets: [{
-                            data: values,
-                            backgroundColor: [
-                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0',
-                                '#9966FF', '#FF9F40', '#8AC926', '#1982C4'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: { position: 'bottom' }
-                        }
-                    }
-                });
-            }).catch(err => {
-                console.error('Chart.js load failed', err);
-            });
-        })
-        .catch(error => {
-            console.error('Error loading chart data:', error);
+fetch('/api/operations_by_category')
+    .then(r => r.json())
+    .then(payload => {
+        let labels = [];
+        let values = [];
+        if (Array.isArray(payload)) {
+            payload.forEach(item => { labels.push(item.category); values.push(item.amount); });
+        } else if (payload.categories && payload.amounts) {
+            labels = payload.categories;
+            values = payload.amounts;
+        }
+        if (labels.length === 0) {
             document.getElementById('expenseChart').parentElement.innerHTML = `
-            <div class="text-center py-4">
-                <i class="fas fa-exclamation-triangle fa-2x text-warning mb-3"></i>
-                <p class="text-muted">Не удалось загрузить график</p>
+            <div class="text-center py-5">
+                <div class="mb-3" style="width:64px;height:64px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                    <i class="fas fa-chart-pie fa-2x" style="color:var(--gray-light);"></i>
+                </div>
+                <p class="text-muted">Нет данных для графика</p>
             </div>`;
+            return;
+        }
+        const ctx = document.getElementById('expenseChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#4BC0C0','#9966FF','#FF9F40','#8AC926','#1982C4'],
+                    borderWidth: 2,
+                    borderColor: '#fff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '65%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { boxWidth: 12, font: { size: 11 }, padding: 15, usePointStyle: true }
+                    }
+                }
+            }
         });
-
-    // Обновление данных каждые 30 секунд
-    setInterval(() => {
-        fetch('/')
-            .then(() => console.log('Dashboard updated'))
-            .catch(() => console.log('Update failed'));
-    }, 30000);
+    })
+    .catch(() => {
+        document.getElementById('expenseChart').parentElement.innerHTML = `
+        <div class="text-center py-5">
+            <div class="mb-3" style="width:64px;height:64px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto;">
+                <i class="fas fa-exclamation-triangle fa-2x" style="color:var(--warning);"></i>
+            </div>
+            <p class="text-muted">Не удалось загрузить график</p>
+        </div>`;
+    });
 </script>
 {% endblock %}

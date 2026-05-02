@@ -2,20 +2,20 @@
 {% block title %}Вход{% endblock %}
 
 {% block content %}
-<div class="mobile-container" style="max-width: 420px; margin: 0 auto;">
-    <div class="text-center mb-4">
-        <div class="action-icon action-add" style="width:72px;height:72px;background:linear-gradient(135deg,#4361ee,#3a0ca3);box-shadow:0 8px 30px rgba(58,12,163,0.2);">
-            <i class="fas fa-wallet fa-2x"></i>
+<div class="mobile-container" style="max-width:420px;margin:0 auto;padding-top:40px;">
+    <div class="text-center mb-5">
+        <div style="width:80px;height:80px;background:linear-gradient(135deg,var(--primary),var(--primary-dark));border-radius:var(--radius-xl);display:flex;align-items:center;justify-content:center;margin:0 auto 20px;box-shadow:0 12px 40px rgba(79,70,229,0.25);">
+            <i class="fas fa-wallet fa-2x text-white"></i>
         </div>
-        <h1 class="mobile-h1">Финансовый контроль</h1>
+        <h1 class="mobile-h1 mb-2">Финансовый контроль</h1>
         <p class="text-muted">Войдите в ваш аккаунт</p>
     </div>
 
-    <div class="mobile-card">
+    <div class="mobile-card" style="box-shadow:var(--shadow-lg);">
         <form method="post" id="loginForm">
-            <div class="mb-3">
-                <label class="form-label mb-2">
-                    <i class="fas fa-user me-2"></i>Имя пользователя
+            <div class="mb-4">
+                <label class="form-label">
+                    <i class="fas fa-user me-2" style="color:var(--primary);"></i>Имя пользователя
                 </label>
                 <input type="text" name="username" class="mobile-input"
                        placeholder="Введите имя пользователя" required
@@ -23,8 +23,8 @@
             </div>
 
             <div class="mb-4">
-                <label class="form-label mb-2">
-                    <i class="fas fa-key me-2"></i>Пароль
+                <label class="form-label">
+                    <i class="fas fa-key me-2" style="color:var(--primary);"></i>Пароль
                 </label>
                 <div class="position-relative">
                     <input type="password" name="password" id="password"
@@ -32,86 +32,69 @@
                            autocomplete="current-password">
                     <button type="button" class="btn btn-link password-toggle"
                             onclick="togglePassword()"
-                            style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%);">
+                            style="position:absolute;right:12px;top:50%;transform:translateY(-50%);color:var(--gray);text-decoration:none;">
                         <i class="fas fa-eye"></i>
                     </button>
                 </div>
             </div>
 
-            <button type="submit" class="mobile-btn mobile-btn-primary">
+            <button type="submit" class="mobile-btn mobile-btn-primary" style="border-radius:var(--radius);">
                 <i class="fas fa-right-to-bracket me-2"></i>Войти
             </button>
 
             <div class="text-center mt-3">
-                <a href="#" class="text-muted" style="font-size: 0.9rem;">
+                <a href="#" class="text-muted" style="font-size:0.9rem;text-decoration:none;">
                     <i class="fas fa-question-circle me-1"></i>Забыли пароль?
                 </a>
             </div>
         </form>
     </div>
 
-    <!-- Тестовые пользователи -->
-    <div class="mobile-card mt-3">
+    <div class="mobile-card mt-4">
         <h6 class="mobile-h4 mb-3">
-            <i class="fas fa-users me-2"></i>Тестовые пользователи
+            <i class="fas fa-users me-2" style="color:var(--primary);"></i>Тестовые пользователи
         </h6>
         <div class="row g-2">
             <div class="col-12">
-                <div class="p-3 border rounded mb-2 test-user-card test-owner">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>Владелец</strong>
-                            <div style="font-size: 0.9rem; color: #666;">
-                                admin / admin123
-                            </div>
-                        </div>
-                        <span class="badge bg-primary">Полный доступ</span>
+                <div class="test-user-card test-owner">
+                    <div>
+                        <strong style="color:var(--primary);">Владелец</strong>
+                        <div style="font-size:0.85rem;color:var(--gray);">admin / admin123</div>
                     </div>
+                    <span class="badge bg-primary">Полный доступ</span>
                 </div>
             </div>
             <div class="col-12">
-                <div class="p-3 border rounded mb-2 test-user-card test-accountant">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>Бухгалтер</strong>
-                            <div style="font-size: 0.9rem; color: #666;">
-                                accountant / 123456
-                            </div>
-                        </div>
-                        <span class="badge bg-warning">Только учет</span>
+                <div class="test-user-card test-accountant">
+                    <div>
+                        <strong style="color:var(--warning);">Бухгалтер</strong>
+                        <div style="font-size:0.85rem;color:var(--gray);">accountant / 123456</div>
                     </div>
+                    <span class="badge bg-warning text-dark">Только учет</span>
                 </div>
             </div>
             <div class="col-12">
-                <div class="p-3 border rounded test-user-card test-manager">
-                    <div class="d-flex justify-content-between align-items-center">
-                        <div>
-                            <strong>Менеджер</strong>
-                            <div style="font-size: 0.9rem; color: #666;">
-                                manager / 123456
-                            </div>
-                        </div>
-                        <span class="badge bg-info">Только просмотр</span>
+                <div class="test-user-card test-manager">
+                    <div>
+                        <strong style="color:var(--secondary);">Менеджер</strong>
+                        <div style="font-size:0.85rem;color:var(--gray);">manager / 123456</div>
                     </div>
+                    <span class="badge bg-info text-white">Только просмотр</span>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Советы по безопасности -->
     <div class="mt-4 text-center">
-        <div style="font-size: 0.8rem; color: #999;">
+        <div style="font-size:0.8rem;color:var(--gray-light);">
             <i class="fas fa-shield-alt me-1"></i>Ваши данные защищены
         </div>
     </div>
 </div>
 
 <script>
-// Автофокус на поле ввода
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('input[name="username"]').focus();
-
-    // Анимация формы
     const form = document.getElementById('loginForm');
     form.addEventListener('submit', function() {
         const btn = this.querySelector('button[type="submit"]');
@@ -119,7 +102,5 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.disabled = true;
     });
 });
-
-// Функция togglePassword уже определена в base.html
 </script>
 {% endblock %}

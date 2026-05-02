@@ -4,402 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Финансы - {% block title %}{% endblock %}</title>
-
-    <!-- Bootstrap CSS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Mobile Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-
-    <!-- Mobile Styles -->
-    <style>
-        :root {
-            --primary-color: #4361ee;
-            --secondary-color: #3a0ca3;
-            --success-color: #4cc9f0;
-            --danger-color: #f72585;
-            --warning-color: #f8961e;
-            --light-color: #f8f9fa;
-            --dark-color: #212529;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(180deg, #f3f6ff 0%, #f8fbff 100%);
-            color: #333;
-            line-height: 1.6;
-            padding-bottom: 70px; /* Для нижнего меню */
-        }
-
-        /* Мобильная навигация */
-        .mobile-nav {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            z-index: 1000;
-            padding: 10px 0;
-            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
-        }
-
-        .mobile-nav-item {
-            text-align: center;
-            color: #666;
-            text-decoration: none;
-            font-size: 0.8rem;
-        }
-
-            .mobile-nav-item.active {
-                color: var(--primary-color);
-            }
-
-        .mobile-nav-icon {
-            font-size: 1.2rem;
-            display: block;
-            margin-bottom: 4px;
-        }
-
-        /* Карточки для мобильных */
-        .mobile-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-            border: 1px solid #f0f0f0;
-        }
-
-        /* Кнопки для мобильных */
-        .mobile-btn {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            border-radius: 12px;
-            border: none;
-            font-weight: 600;
-            font-size: 16px;
-            margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-btn-primary {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-        }
-
-            .mobile-btn-primary:active {
-                transform: scale(0.98);
-                opacity: 0.9;
-            }
-
-        /* Мобильные таблицы */
-        .mobile-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-            .mobile-table th {
-                background: #f8f9fa;
-                padding: 12px 10px;
-                font-weight: 600;
-                border-bottom: 2px solid #e9ecef;
-            }
-
-            .mobile-table td {
-                padding: 12px 10px;
-                border-bottom: 1px solid #e9ecef;
-            }
-
-        /* Мобильные иконки статусов */
-        .status-badge {
-            display: inline-flex;
-            align-items: center;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .status-income {
-            background: rgba(67, 97, 238, 0.1);
-            color: var(--primary-color);
-        }
-
-        .status-expense {
-            background: rgba(247, 37, 133, 0.1);
-            color: var(--danger-color);
-        }
-
-        /* Мобильные формы */
-        .mobile-input {
-            width: 100%;
-            padding: 14px;
-            border: 2px solid #e0e0e0;
-            border-radius: 10px;
-            font-size: 16px;
-            margin-bottom: 15px;
-            transition: border-color 0.3s;
-        }
-
-            .mobile-input:focus {
-                border-color: var(--primary-color);
-                outline: none;
-            }
-
-        /* Мобильные метрики */
-        .metric-card {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 15px;
-            position: relative;
-            overflow: hidden;
-        }
-
-            .metric-card.income {
-                border-left: 5px solid #28a745;
-            }
-
-            .metric-card.expense {
-                border-left: 5px solid #dc3545;
-            }
-
-            .metric-card.profit {
-                border-left: 5px solid #17a2b8;
-            }
-
-        /* Адаптивные заголовки */
-        .mobile-h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-        }
-
-        .mobile-h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-        }
-
-        .mobile-h3 {
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .mobile-h4 {
-            font-size: 1.1rem;
-            font-weight: 500;
-        }
-
-        /* Отступы для мобильных */
-        .mobile-container {
-            padding: 20px 15px;
-        }
-
-        /* Анимации для мобильных */
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-fade {
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        /* Мобильное меню бургер */
-        .mobile-menu-btn {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: white;
-            padding: 10px;
-        }
-
-        /* Фиксированная верхняя панель */
-        .mobile-header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, rgba(67,97,238,0.95), rgba(58,12,163,0.95));
-            color: white;
-            z-index: 1000;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-
-            .mobile-header h1 {
-                font-size: 1.2rem;
-                margin: 0;
-                font-weight: 600;
-            }
-
-        .content-wrapper {
-            margin-top: 60px;
-            padding: 20px 15px;
-        }
-
-        /* Свайп-меню */
-        .swipe-indicator {
-            text-align: center;
-            color: #999;
-            font-size: 12px;
-            margin-top: 10px;
-        }
-
-        /* Мобильные уведомления */
-        .mobile-alert {
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-            font-size: 14px;
-        }
-
-        .mobile-alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .mobile-alert-danger {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        /* Мобильные фильтры */
-        .mobile-filter {
-            background: white;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 15px;
-        }
-
-        /* Улучшенная таблица для мобильных */
-        .table-responsive-mobile {
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Мобильные иконки действий */
-        .action-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-size: 1.2rem;
-            margin: 0 auto;
-        }
-
-        .action-add {
-            background: var(--primary-color);
-        }
-
-        .action-edit {
-            background: var(--warning-color);
-        }
-
-        .action-delete {
-            background: var(--danger-color);
-        }
-
-        /* Адаптивная сетка для метрик */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-bottom: 20px;
-        }
-
-        /* Для очень маленьких экранов */
-        @media (max-width: 360px) {
-            .mobile-h1 {
-                font-size: 1.5rem;
-            }
-
-            .mobile-h2 {
-                font-size: 1.3rem;
-            }
-
-            .mobile-table {
-                font-size: 12px;
-            }
-
-            .mobile-btn {
-                padding: 12px;
-                font-size: 14px;
-            }
-        }
-
-        /* Для планшетов */
-        @media (min-width: 768px) {
-            .mobile-nav {
-                display: none;
-            }
-
-            .content-wrapper {
-                margin-top: 0;
-            }
-        }
-
-        /* Для десктопов */
-        @media (min-width: 992px) {
-            body {
-                padding-bottom: 0;
-            }
-        }
-    </style>
-
-    <!-- Custom app stylesheet loaded after inline styles to ensure overrides (cache-busted) -->
-    <link rel="stylesheet" href="/static/css/app.css?v=2">
-
+    <link rel="stylesheet" href="/static/css/app.css?v=3">
     {% block extra_css %}{% endblock %}
 </head>
 <body>
-    <!-- Floating global hamburger (visible on all pages except auth) -->
-    {% if request.path != '/login' and request.path != '/register' %}
-    <button id="globalHamburger" class="btn btn-primary" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu" style="position:fixed;right:18px;top:18px;z-index:2000;border-radius:50%;width:48px;height:48px;display:flex;align-items:center;justify-content:center;box-shadow:0 6px 20px rgba(0,0,0,0.12);">
-        <i class="fas fa-bars"></i>
-    </button>
-    {% endif %}
-    <!-- Мобильный хедер -->
     <div class="mobile-header d-md-none">
         <div class="d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
-                <button class="btn btn-sm btn-outline-light me-2" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
+                {% if request.path != '/login' and request.path != '/register' %}
+                <button class="btn btn-sm btn-outline-light me-2 rounded-pill" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu">
                     <i class="fas fa-bars"></i>
                 </button>
-                <h1 class="mb-0">💰 Финансовый контроль</h1>
+                {% endif %}
+                <h1 class="mb-0">Финансовый контроль</h1>
             </div>
             <div class="d-flex align-items-center">
                 {% if session.username %}
-                <div class="d-flex flex-column text-end me-2" style="font-size:0.85rem;">
+                <div class="d-flex flex-column text-end me-2" style="font-size:0.8rem;">
                     <strong style="line-height:1;">{{ session.username }}</strong>
-                    <small style="opacity:0.9;">{{ session.role }}</small>
+                    <small style="opacity:0.8;">{{ session.role }}</small>
                 </div>
-                <a href="/logout" class="btn btn-sm btn-outline-light" title="Выйти">
+                <a href="/logout" class="btn btn-sm btn-outline-light rounded-pill" title="Выйти">
                     <i class="fas fa-right-from-bracket"></i>
                 </a>
                 {% else %}
                 {% if request.path != '/login' and request.path != '/register' %}
-                <a href="/login" class="btn btn-sm btn-outline-light">
+                <a href="/login" class="btn btn-sm btn-outline-light rounded-pill">
                     <i class="fas fa-right-to-bracket"></i>
                 </a>
                 {% endif %}
@@ -408,35 +43,41 @@
         </div>
     </div>
 
-    <!-- Offcanvas mobile menu -->
     <div class="offcanvas offcanvas-start" tabindex="-1" id="mobileMenu">
-      <div class="offcanvas-header bg-primary text-white">
-        <h5 class="offcanvas-title">Меню</h5>
-        <button type="button" class="btn-close btn-close-white text-reset" data-bs-dismiss="offcanvas"></button>
-      </div>
-      <div class="offcanvas-body p-0">
-        <div class="list-group list-group-flush">
-          <a href="/" class="list-group-item list-group-item-action"><i class="fas fa-home me-2"></i>Дашборд</a>
-          <a href="/operations" class="list-group-item list-group-item-action"><i class="fas fa-exchange-alt me-2"></i>Операции</a>
-          <a href="/reports" class="list-group-item list-group-item-action"><i class="fas fa-chart-bar me-2"></i>Отчеты</a>
-          <a href="/calendar" class="list-group-item list-group-item-action"><i class="fas fa-calendar-alt me-2"></i>Календарь</a>
-          {% if session.username %}
-          <a href="/logout" class="list-group-item list-group-item-action text-danger"><i class="fas fa-right-from-bracket me-2"></i>Выйти</a>
-          {% else %}
-          <a href="/login" class="list-group-item list-group-item-action text-primary"><i class="fas fa-right-to-bracket me-2"></i>Войти</a>
-          {% endif %}
+        <div class="offcanvas-header text-white">
+            <h5 class="offcanvas-title fw-bold"><i class="fas fa-wallet me-2"></i>Меню</h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"></button>
         </div>
-      </div>
+        <div class="offcanvas-body p-0">
+            <div class="list-group list-group-flush">
+                <a href="/" class="list-group-item list-group-item-action {% if request.path == '/' %}active text-white bg-primary{% endif %}">
+                    <i class="fas fa-home me-2"></i>Дашборд
+                </a>
+                <a href="/operations" class="list-group-item list-group-item-action {% if request.path == '/operations' %}active text-white bg-primary{% endif %}">
+                    <i class="fas fa-exchange-alt me-2"></i>Операции
+                </a>
+                <a href="/reports" class="list-group-item list-group-item-action {% if request.path == '/reports' %}active text-white bg-primary{% endif %}">
+                    <i class="fas fa-chart-bar me-2"></i>Отчеты
+                </a>
+                <a href="/calendar" class="list-group-item list-group-item-action">
+                    <i class="fas fa-calendar-alt me-2"></i>Календарь
+                </a>
+                {% if session.username %}
+                <a href="/logout" class="list-group-item list-group-item-action text-danger">
+                    <i class="fas fa-right-from-bracket me-2"></i>Выйти
+                </a>
+                {% else %}
+                <a href="/login" class="list-group-item list-group-item-action text-primary">
+                    <i class="fas fa-right-to-bracket me-2"></i>Войти
+                </a>
+                {% endif %}
+            </div>
+        </div>
     </div>
 
-    <!-- Десктопная навигация (скрыта на мобильных) -->
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark d-none d-md-flex">
+    <nav class="navbar navbar-expand-lg navbar-dark d-none d-md-flex">
         <div class="container">
-            <!-- Desktop hamburger to open the same offcanvas menu -->
-            <button class="btn btn-outline-light me-2 d-none d-md-inline-block" data-bs-toggle="offcanvas" data-bs-target="#mobileMenu" aria-controls="mobileMenu">
-                <i class="fas fa-bars"></i>
-            </button>
-            <a class="navbar-brand" href="/">💰 Финансовый контроль</a>
+            <a class="navbar-brand" href="/"><i class="fas fa-wallet me-2"></i>Финансовый контроль</a>
             {% if session.username %}
             <div class="collapse navbar-collapse">
                 <ul class="navbar-nav me-auto">
@@ -461,10 +102,10 @@
                         </a>
                     </li>
                 </ul>
-                <span class="navbar-text me-3">
-                    {{ session.username }} ({{ session.role }})
+                <span class="navbar-text me-3 text-white-50">
+                    <i class="fas fa-user me-1"></i>{{ session.username }}
                 </span>
-                <a href="/logout" class="btn btn-outline-light">
+                <a href="/logout" class="btn btn-outline-light rounded-pill btn-sm">
                     <i class="fas fa-sign-out-alt me-1"></i>Выйти
                 </a>
             </div>
@@ -472,22 +113,19 @@
         </div>
     </nav>
 
-    <!-- Основной контент -->
     <div class="content-wrapper">
         {% with messages = get_flashed_messages() %}
         {% if messages %}
         {% for message in messages %}
         <div class="mobile-alert mobile-alert-success animate-fade">
-            {{ message }}
+            <i class="fas fa-check-circle"></i>{{ message }}
         </div>
         {% endfor %}
         {% endif %}
         {% endwith %}
-
         {% block content %}{% endblock %}
     </div>
 
-    <!-- Мобильное нижнее меню (только для мобильных) -->
     {% if session.username %}
     <div class="mobile-nav d-md-none">
         <div class="container">
@@ -495,25 +133,25 @@
                 <div class="col">
                     <a href="/" class="mobile-nav-item {% if request.path == '/' %}active{% endif %}">
                         <i class="fas fa-home mobile-nav-icon"></i>
-                        Дашборд
+                        <span>Дашборд</span>
                     </a>
                 </div>
                 <div class="col">
                     <a href="/operations" class="mobile-nav-item {% if request.path == '/operations' %}active{% endif %}">
                         <i class="fas fa-exchange-alt mobile-nav-icon"></i>
-                        Операции
+                        <span>Операции</span>
                     </a>
                 </div>
                 <div class="col">
                     <a href="/reports" class="mobile-nav-item {% if request.path == '/reports' %}active{% endif %}">
                         <i class="fas fa-chart-bar mobile-nav-icon"></i>
-                        Отчеты
+                        <span>Отчеты</span>
                     </a>
                 </div>
                 <div class="col">
                     <a href="/logout" class="mobile-nav-item">
                         <i class="fas fa-sign-out-alt mobile-nav-icon"></i>
-                        Выход
+                        <span>Выход</span>
                     </a>
                 </div>
             </div>
@@ -521,79 +159,26 @@
     </div>
     {% endif %}
 
-    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Chart.js is lazy loaded on pages that need it -->
-
-    <!-- Мобильные скрипты -->
     <script>
-        // Анимация загрузки
         document.addEventListener('DOMContentLoaded', function () {
-            // Добавляем анимацию появления
             const content = document.querySelector('.content-wrapper');
             if (content) {
                 content.classList.add('animate-fade');
             }
-
-            // Обработка свайпов (упрощенная)
-            let startX, startY;
-            const threshold = 50;
-
-            document.addEventListener('touchstart', function (e) {
-                startX = e.touches[0].clientX;
-                startY = e.touches[0].clientY;
-            });
-
-            document.addEventListener('touchend', function (e) {
-                if (!startX || !startY) return;
-
-                const endX = e.changedTouches[0].clientX;
-                const endY = e.changedTouches[0].clientY;
-                const diffX = startX - endX;
-                const diffY = startY - endY;
-
-                // Если горизонтальный свайп больше вертикального
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > threshold) {
-                    if (diffX > 0) {
-                        // Свайп влево
-                        console.log('Свайп влево');
-                    } else {
-                        // Свайп вправо
-                        console.log('Свайп вправо');
-                    }
-                }
-
-                startX = null;
-                startY = null;
-            });
-
-            // Фиксация высоты для мобильных браузеров
-            function setVH() {
-                let vh = window.innerHeight * 0.01;
-                document.documentElement.style.setProperty('--vh', `${vh}px`);
-            }
-
-            setVH();
-            window.addEventListener('resize', setVH);
-            window.addEventListener('orientationchange', setVH);
-
-            // Обработка нажатий для мобильных кнопок
             document.querySelectorAll('.mobile-btn').forEach(btn => {
                 btn.addEventListener('touchstart', function () {
-                    this.style.opacity = '0.8';
+                    this.style.transform = 'scale(0.98)';
                 });
-
                 btn.addEventListener('touchend', function () {
-                    this.style.opacity = '1';
+                    this.style.transform = '';
                 });
             });
         });
-
-        // Показать/скрыть пароль
         function togglePassword() {
             const passwordInput = document.getElementById('password');
             const toggleIcon = document.querySelector('.password-toggle i');
-
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 toggleIcon.classList.remove('fa-eye');
@@ -605,7 +190,6 @@
             }
         }
     </script>
-
     {% block extra_js %}{% endblock %}
 </body>
 </html>

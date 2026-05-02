@@ -2,45 +2,48 @@
 {% block title %}Пользователи{% endblock %}
 
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-4">
-    <h2>Управление пользователями</h2>
-    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addUserModal">
-        Добавить пользователя
-    </button>
-</div>
+<div class="mobile-container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="mobile-h2 mb-0">
+            <i class="fas fa-users me-2" style="color:var(--primary);"></i>Пользователи
+        </h1>
+        <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <i class="fas fa-plus me-2"></i>Добавить
+        </button>
+    </div>
 
-<div class="card">
-    <div class="card-body">
-        <div class="table-responsive">
-            <table class="table table-hover">
+    <div class="mobile-card">
+        <div class="table-responsive-mobile">
+            <table class="mobile-table">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Имя пользователя</th>
-                        <th>Email</th>
+                        <th>Пользователь</th>
                         <th>Роль</th>
-                        <th>Дата регистрации</th>
-                        <th>Действия</th>
+                        <th class="text-end">Действия</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for user in users %}
                     <tr>
-                        <td>{{ user.id }}</td>
-                        <td>{{ user.username }}</td>
-                        <td>{{ user.email }}</td>
                         <td>
-                            <span class="badge bg-{{ 'danger' if user.role == 'owner' else 'warning' if user.role == 'accountant' else 'info' }}">
-                                {{ user.role }}
+                            <div style="font-weight:600;">{{ user.username }}</div>
+                            <div style="font-size:0.8rem;color:var(--gray);">{{ user.email }}</div>
+                        </td>
+                        <td>
+                            <span class="badge bg-{{ 'primary' if user.role == 'owner' else 'warning text-dark' if user.role == 'accountant' else 'info' }}">
+                                {{ 'Владелец' if user.role == 'owner' else 'Бухгалтер' if user.role == 'accountant' else 'Менеджер' }}
                             </span>
                         </td>
-                        <td>{{ user.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
-                        <td>
-                            <button class="btn btn-sm btn-outline-warning" 
-                                    onclick="editUser({{ user.id }})">Изменить</button>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary rounded-pill me-1" style="font-size:0.75rem;padding:4px 12px;"
+                                    onclick="editUser({{ user.id }})">
+                                <i class="fas fa-pen"></i>
+                            </button>
                             {% if user.id != current_user.id %}
-                            <button class="btn btn-sm btn-outline-danger"
-                                    onclick="deleteUser({{ user.id }})">Удалить</button>
+                            <button class="btn btn-sm btn-outline-danger rounded-pill" style="font-size:0.75rem;padding:4px 12px;"
+                                    onclick="deleteUser({{ user.id }})">
+                                <i class="fas fa-trash"></i>
+                            </button>
                             {% endif %}
                         </td>
                     </tr>
@@ -48,34 +51,44 @@
                 </tbody>
             </table>
         </div>
+
+        {% if users|length == 0 %}
+        <div class="text-center py-5">
+            <div style="width:64px;height:64px;background:var(--bg);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+                <i class="fas fa-users fa-2x" style="color:var(--gray-light);"></i>
+            </div>
+            <p class="text-muted">Нет пользователей</p>
+        </div>
+        {% endif %}
     </div>
 </div>
 
-<!-- Модальное окно добавления пользователя -->
 <div class="modal fade" id="addUserModal" tabindex="-1">
-    <div class="modal-dialog">
+    <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Новый пользователь</h5>
+                <h5 class="modal-title mobile-h4">
+                    <i class="fas fa-user-plus me-2" style="color:var(--primary);"></i>Новый пользователь
+                </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form method="post" action="{{ url_for('register') }}">
                 <div class="modal-body">
                     <div class="mb-3">
                         <label class="form-label">Имя пользователя*</label>
-                        <input type="text" name="username" class="form-control" required>
+                        <input type="text" name="username" class="mobile-input" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Email*</label>
-                        <input type="email" name="email" class="form-control" required>
+                        <input type="email" name="email" class="mobile-input" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Пароль*</label>
-                        <input type="password" name="password" class="form-control" required>
+                        <input type="password" name="password" class="mobile-input" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Роль*</label>
-                        <select name="role" class="form-select" required>
+                        <select name="role" class="mobile-input" required>
                             <option value="manager">Менеджер</option>
                             <option value="accountant">Бухгалтер</option>
                             <option value="owner">Владелец</option>
@@ -83,8 +96,10 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
-                    <button type="submit" class="btn btn-primary">Создать</button>
+                    <button type="button" class="btn btn-light rounded-pill" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary rounded-pill px-4">
+                        <i class="fas fa-save me-2"></i>Создать
+                    </button>
                 </div>
             </form>
         </div>
@@ -92,12 +107,11 @@
 </div>
 {% endblock %}
 
-{% block scripts %}
+{% block extra_js %}
 <script>
 function editUser(userId) {
     alert('Редактирование пользователя ID: ' + userId + '\n(В учебном примере реализуется отдельно)');
 }
-
 function deleteUser(userId) {
     if (confirm('Вы уверены, что хотите удалить пользователя?')) {
         alert('Удаление пользователя ID: ' + userId + '\n(В учебном примере реализуется отдельно)');
